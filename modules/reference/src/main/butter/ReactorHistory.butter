@@ -1,0 +1,9 @@
+component ReactorHistory() {
+  Panel(
+    class: "p-4 bg-panel",
+    children: [
+      Text("History", class: "font-bold"),
+      ReactorGraph(id: "reactor-graph", class: "w-full h-20")
+    ]
+  )
+}

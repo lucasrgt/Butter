@@ -1,0 +1,9 @@
+component ContainmentPanel() {
+  Panel(
+    class: "p-4 bg-panel",
+    children: [
+      Text("Magnetic containment", class: "font-bold"),
+      EnergyBar(id: "magnetic-field", value: magneticField, max: 100)
+    ]
+  )
+}

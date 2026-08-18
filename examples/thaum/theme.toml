@@ -1,0 +1,15 @@
+id = "thaumcraft"
+
+[colors]
+panel = "#1A1020"
+accent = "#6B3DAA"
+vis = "#2E8B57"
+arcane = "#C9A227"
+tooltip = "#120818"
+text = "#E8DCC8"
+energy = "#5C2D91"
+slot = "#0D0814"
+button = "#3D2A55"
+
+[slots]
+research = "gui/thaum/slot.png"

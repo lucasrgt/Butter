@@ -1,0 +1,19 @@
+component FuelSection() {
+  Row(
+    class: "gap-4",
+    children: [
+      FluidTank(
+        id: "deuterium",
+        value: deuterium,
+        max: 100,
+        semantics: (id: "deuterium", role: tank, label: "Deuterium")
+      ),
+      FluidTank(
+        id: "tritium",
+        value: tritium,
+        max: 100,
+        semantics: (id: "tritium", role: tank, label: "Tritium")
+      )
+    ]
+  )
+}

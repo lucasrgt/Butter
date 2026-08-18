@@ -1,0 +1,8 @@
+package butter.compiler;
+
+enum TokenKind {
+    IDENT, STRING, NUMBER, TRUE, FALSE, NULL,
+    LPAREN, RPAREN, LBRACK, RBRACK, LBRACE, RBRACE,
+    COLON, COMMA, DOT, EQUAL, LT, GT, QMARK,
+    COMPONENT, PRIVATE, LET, EOF
+}

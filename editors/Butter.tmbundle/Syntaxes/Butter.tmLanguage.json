@@ -1,0 +1,65 @@
+{
+  "name": "Butter",
+  "scopeName": "source.butter",
+  "fileTypes": ["butter"],
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#strings" },
+    { "include": "#keywords" },
+    { "include": "#constants" },
+    { "include": "#types" },
+    { "include": "#numbers" },
+    { "include": "#call" },
+    { "include": "#property" }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.butter",
+          "match": "//.*$"
+        },
+        {
+          "name": "comment.block.butter",
+          "begin": "/\\*",
+          "end": "\\*/"
+        }
+      ]
+    },
+    "strings": {
+      "name": "string.quoted.double.butter",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "name": "constant.character.escape.butter",
+          "match": "\\\\."
+        }
+      ]
+    },
+    "keywords": {
+      "name": "keyword.control.butter",
+      "match": "\\b(component|private|let)\\b"
+    },
+    "constants": {
+      "name": "constant.language.butter",
+      "match": "\\b(true|false|null)\\b"
+    },
+    "types": {
+      "name": "entity.name.type.butter",
+      "match": "\\b(String|int|float|boolean|Widget|List)\\b"
+    },
+    "numbers": {
+      "name": "constant.numeric.butter",
+      "match": "-?\\b\\d+(\\.\\d+)?\\b"
+    },
+    "call": {
+      "name": "entity.name.function.butter",
+      "match": "\\b[A-Za-z_][A-Za-z0-9_]*\\b(?=\\s*\\()"
+    },
+    "property": {
+      "name": "variable.parameter.butter",
+      "match": "\\b[A-Za-z_][A-Za-z0-9_]*\\b(?=\\s*:)"
+    }
+  }
+}

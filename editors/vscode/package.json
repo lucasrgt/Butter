@@ -1,0 +1,49 @@
+{
+  "name": "butter",
+  "displayName": "Butter",
+  "description": "Syntax highlighting and format for .butter templates.",
+  "version": "0.1.0",
+  "publisher": "butter",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Formatters"
+  ],
+  "activationEvents": [
+    "onLanguage:butter"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "butter",
+        "aliases": [
+          "Butter"
+        ],
+        "extensions": [
+          ".butter"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "butter",
+        "scopeName": "source.butter",
+        "path": "../Butter.tmbundle/Syntaxes/Butter.tmLanguage.json"
+      }
+    ],
+    "configuration": {
+      "title": "Butter",
+      "properties": {
+        "butter.java": {
+          "type": "string",
+          "default": "java",
+          "description": "Java executable used to run butter format."
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,9 @@
+component CoolingPanel() {
+  Panel(
+    class: "p-4 bg-panel",
+    children: [
+      Text("Cooling", class: "font-bold"),
+      EnergyBar(id: "coolant", value: coolant, max: 100)
+    ]
+  )
+}

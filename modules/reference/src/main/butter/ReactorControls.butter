@@ -1,0 +1,10 @@
+component ReactorControls() {
+  Row(
+    class: "gap-4",
+    children: [
+      Button("Ignite", id: "ignite", enabled: canIgnite, action: ignite, class: "px-8 h-20 bg-accent"),
+      Button("Standby", id: "standby", action: standby, class: "px-8 h-20"),
+      Button("SCRAM", id: "scram", enabled: canScram, action: scram, class: "px-8 h-20 bg-accent")
+    ]
+  )
+}

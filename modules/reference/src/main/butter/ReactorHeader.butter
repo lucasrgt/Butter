@@ -1,0 +1,9 @@
+component ReactorHeader(title: String = "Fusion Reactor") {
+  Row(
+    class: "justify-between items-center",
+    children: [
+      Text(title, class: "text-lg font-bold"),
+      Text(status, id: "reactor-status")
+    ]
+  )
+}

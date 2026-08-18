@@ -1,0 +1,11 @@
+component ReactorCore() {
+  Panel(
+    class: "p-4 gap-2 bg-panel",
+    children: [
+      Text("Reactor core", class: "font-bold"),
+      Slider(id: "fusion-intensity", value: fusionIntensity, class: "w-full h-20"),
+      FusionInjector(id: "fusion-injector"),
+      Text("Plasma", id: "plasma-label")
+    ]
+  )
+}

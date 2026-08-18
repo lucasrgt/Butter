@@ -9,6 +9,7 @@ import java.util.Map;
 import butter.core.Binding;
 import butter.core.WidgetSpec;
 import butter.signals.ReadonlySignal;
+import butter.signals.Signal;
 
 final class Resolver {
     private final Object backing;
@@ -46,6 +47,25 @@ final class Resolver {
             return method.invoke(backing);
         } catch (Exception error) {
             throw new IllegalStateException("action failed: " + path, error);
+        }
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    void write(String path, Object value) {
+        if (backing == null) throw new IllegalStateException("no backing class for write " + path);
+        try {
+            Object current = backing;
+            String[] parts = path.split("\\.");
+            for (int index = 0; index < parts.length - 1; index++) {
+                current = unwrap(member(current, parts[index]));
+            }
+            String leaf = parts[parts.length - 1];
+            Field field = current.getClass().getField(leaf);
+            Object cell = field.get(current);
+            if (cell instanceof Signal) ((Signal) cell).set(value);
+            else field.set(current, value);
+        } catch (Exception error) {
+            throw new IllegalStateException("write failed: " + path, error);
         }
     }
 

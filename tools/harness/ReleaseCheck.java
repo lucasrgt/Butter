@@ -40,11 +40,14 @@ public final class ReleaseCheck {
                 "public static final String VERSION = \"" + version + "\";");
         for (String file : Arrays.asList("README.md", "CHANGELOG.md", "AGENTS.md",
                 "docs/VISION.md", "docs/ARCHITECTURE.md", "docs/ROADMAP.md", "docs/SYNTAX.md",
-                "docs/SEMANTICS.md", "docs/WORLDLINE.md", "docs/THEME.md",
+                "docs/SEMANTICS.md", "docs/WORLDLINE.md", "docs/THEME.md", "docs/LIBRARY.md",
                 "themes/vanilla.toml", "themes/thaum.toml", "smokes/hostui-live/MAP.md",
-                "editors/README.md", "editors/vscode/package.json")) {
+                "editors/README.md", "editors/vscode/package.json",
+                "editors/vscode/syntaxes/butter.tmLanguage.json", ".vscode/settings.json")) {
             if (!Files.isRegularFile(root.resolve(file))) throw new IllegalStateException("missing " + file);
         }
+        sameFile("editors/Butter.tmbundle/Syntaxes/Butter.tmLanguage.json",
+                "editors/vscode/syntaxes/butter.tmLanguage.json");
         verifyPublicTree();
         System.out.println("  release: Butter v" + version + " host runtime GO");
     }
@@ -89,6 +92,14 @@ public final class ReleaseCheck {
         String result = source.getProperty(key);
         if (result == null || result.trim().isEmpty()) throw new IllegalStateException("missing " + key);
         return result.trim();
+    }
+
+    private void sameFile(String left, String right) throws IOException {
+        String first = new String(Files.readAllBytes(root.resolve(left)), StandardCharsets.UTF_8)
+                .replace("\r\n", "\n");
+        String second = new String(Files.readAllBytes(root.resolve(right)), StandardCharsets.UTF_8)
+                .replace("\r\n", "\n");
+        if (!first.equals(second)) throw new IllegalStateException(left + " must match " + right);
     }
 
     private void requireText(String relative, String expected) throws IOException {

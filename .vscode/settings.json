@@ -1,0 +1,9 @@
+{
+  "files.associations": {
+    "*.butter": "butter"
+  },
+  "[butter]": {
+    "editor.defaultFormatter": "butter.butter",
+    "editor.formatOnSave": true
+  }
+}

@@ -33,6 +33,27 @@ public final class HostRendererTest {
         BufferCanvas tint = new BufferCanvas(40, 40);
         new HostRenderer(thaum).paint(vis, tint);
         require(tint.sample(2, 2) == thaum.color("vis"), "theme fill");
+        LayoutNode search = LayoutEngine.layout(ButterCompiler.compileSource("Search.butter",
+                "SearchBar(id: \"search\", placeholder: \"Search...\")", null), BoxConstraints.loose(100, 20));
+        BufferCanvas query = new BufferCanvas(100, 20);
+        new HostRenderer().paint(search, query);
+        require(query.sample(2, 2) == butter.core.Theme.standard().color("muted"), "search placeholder");
+        LayoutNode caret = LayoutEngine.layout(ButterCompiler.compileSource("Caret.butter",
+                "SearchBar(id: \"search\", focused: true)", null), BoxConstraints.loose(100, 20));
+        BufferCanvas focused = new BufferCanvas(100, 20);
+        new HostRenderer().paint(caret, focused);
+        require(focused.sample(2, 2) == HostRenderer.TEXT, "search caret");
+        LayoutNode tab = LayoutEngine.layout(ButterCompiler.compileSource("Tab.butter",
+                "Tab(\"Name\", selected: true, side: \"left\")", null), BoxConstraints.loose(40, 20));
+        BufferCanvas selected = new BufferCanvas(40, 20);
+        new HostRenderer().paint(tab, selected);
+        require(selected.sample(23, 2) == HostRenderer.PANEL, "tab merges");
+        LayoutNode panel = LayoutEngine.layout(ButterCompiler.compileSource("Bevel.butter",
+                "Panel(class: \"w-20 h-20 bg-panel border-vanilla\")", null), BoxConstraints.loose(40, 40));
+        BufferCanvas bevel = new BufferCanvas(40, 40);
+        new HostRenderer().paint(panel, bevel);
+        require(bevel.sample(0, 0) == butter.core.Theme.standard().color("highlight"), "raised highlight");
+        require(bevel.sample(19, 19) == butter.core.Theme.standard().color("shadow"), "raised shadow");
         System.out.println("  render: host framebuffer");
     }
 

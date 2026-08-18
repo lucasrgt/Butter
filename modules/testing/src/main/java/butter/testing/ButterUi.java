@@ -30,6 +30,10 @@ public final class ButterUi implements HostUi {
 
     public void click(String name) { runtime.click(name); }
 
+    public boolean type(char ch) { return runtime.type(ch); }
+
+    public boolean backspace() { return runtime.backspace(); }
+
     public static final class Handle {
         private final ButterRuntime runtime;
         private final SemanticNode node;

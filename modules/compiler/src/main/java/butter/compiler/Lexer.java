@@ -106,6 +106,7 @@ final class Lexer {
     private TokenKind keyword(String text) {
         if ("component".equals(text)) return TokenKind.COMPONENT;
         if ("private".equals(text)) return TokenKind.PRIVATE;
+        if ("public".equals(text)) return TokenKind.PUBLIC;
         if ("let".equals(text)) return TokenKind.LET;
         if ("true".equals(text)) return TokenKind.TRUE;
         if ("false".equals(text)) return TokenKind.FALSE;

@@ -23,6 +23,22 @@ public final class ButterRuntimeTest {
         require(runtime.node("go").enabled, "enabled after signal");
         runtime.click("go");
         require(host.crafted == 1, "action");
+        WidgetSpec chrome = ButterCompiler.compile(java.nio.file.Paths.get("examples/vanilla/Chrome.butter"));
+        ButterRuntime screen = ButterRuntime.mount(chrome, null);
+        screen.click("search");
+        require(screen.type('a') && screen.type('b'), "type");
+        require("ab".equals(screen.node("search").value), "query");
+        require(screen.backspace() && "a".equals(screen.node("search").value), "backspace");
+        screen.click("sort-size");
+        require(Boolean.TRUE.equals(screen.tree().children().get(0).children().get(1).prop("selected")), "tab");
+        screen.pointer("scroll", 27, 54);
+        require(((Number) screen.node("scroll").value).intValue() == 5, "scroll");
+        Query query = new Query();
+        ButterRuntime bound = ButterRuntime.mount(ButterCompiler.compileSource("Query.butter",
+                "SearchBar(id: \"search\", value: query, placeholder: \"Search...\")", Query.class), query);
+        bound.click("search");
+        bound.type('z');
+        require("z".equals(query.query.get()), "bound query");
         System.out.println("  runtime: signals, actions, invalidation");
     }
 
@@ -38,5 +54,10 @@ public final class ButterRuntimeTest {
         });
         int crafted;
         @ButterAction public void craft() { crafted++; }
+    }
+
+    @ButterComponent(template = "Query.butter")
+    public static final class Query {
+        public final Signal<String> query = Signal.of("");
     }
 }

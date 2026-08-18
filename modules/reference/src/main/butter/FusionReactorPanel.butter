@@ -8,39 +8,41 @@ private component MetricCard(title: String, child: Widget) {
   )
 }
 
-Column(
-  class: "p-8 gap-4 bg-panel",
-  children: [
-    ReactorHeader(title: "Fusion Reactor"),
-    ReactorCore(),
-    Row(
-      class: "gap-4",
-      children: [
-        MetricCard(
-          title: "Energy output",
-          child: EnergyBar(
-            id: "energy-output",
-            value: energyOutput,
-            max: 200000,
-            semantics: (id: "energy-output", role: energy, label: "Energy output")
+public component FusionReactorPanel() {
+  Column(
+    class: "p-8 gap-4 bg-panel",
+    children: [
+      ReactorHeader(title: "Fusion Reactor"),
+      ReactorCore(),
+      Row(
+        class: "gap-4",
+        children: [
+          MetricCard(
+            title: "Energy output",
+            child: EnergyBar(
+              id: "energy-output",
+              value: energyOutput,
+              max: 200000,
+              semantics: (id: "energy-output", role: energy, label: "Energy output")
+            )
+          ),
+          MetricCard(
+            title: "Temperature",
+            child: EnergyBar(
+              id: "plasma-temperature",
+              value: plasmaTemperature,
+              max: 200000000,
+              class: "h-20"
+            )
           )
-        ),
-        MetricCard(
-          title: "Temperature",
-          child: EnergyBar(
-            id: "plasma-temperature",
-            value: plasmaTemperature,
-            max: 200000000,
-            class: "h-20"
-          )
-        )
-      ]
-    ),
-    FuelSection(),
-    ReactorControls(),
-    CoolingPanel(),
-    ContainmentPanel(),
-    ReactorHistory(),
-    PlayerInventory()
-  ]
-)
+        ]
+      ),
+      FuelSection(),
+      ReactorControls(),
+      CoolingPanel(),
+      ContainmentPanel(),
+      ReactorHistory(),
+      PlayerInventory()
+    ]
+  )
+}

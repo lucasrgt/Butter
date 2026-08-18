@@ -33,7 +33,7 @@ final class ButterPrinter {
 
     private void component(ComponentAst component, int indent) {
         pad(indent);
-        if (component.priv) out.append("private ");
+        out.append(component.priv ? "private " : "public ");
         out.append("component ").append(component.name).append('(');
         for (int index = 0; index < component.params.size(); index++) {
             if (index > 0) out.append(", ");

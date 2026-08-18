@@ -13,7 +13,12 @@ Overlapping Minecraft roles use the Worldline `GameUiNode` vocabulary:
 | `Inventory`, `PlayerInventory`, `ItemGrid` | `inventory` |
 
 PRD aliases `item_slot` and `fluid_tank` canonicalize to `slot` and `tank`.
-Butter-only roles stay: `button`, `text`, `slider`, `machine`, `model`, `tooltip`.
+Butter-only roles stay: `button`, `text`, `slider`, `machine`, `model`, `tooltip`,
+`search`, `tab`, `tablist`, `scrollbar`, `separator`.
+
+`SearchBar` infers role `search`, click, and a label from `placeholder`.
+Typed text is `value`. `Tab` infers `tab` plus click; click selects inside
+the parent `TabBar`. `Scrollbar` infers `scrollbar` plus `set_value`.
 
 Empty `PlayerInventory` expands to 36 indexed `Slot`s (`player-0`..`player-35`).
 Empty `ItemGrid` expands to `slots` (default 9) unindexed `Slot`s. Empty

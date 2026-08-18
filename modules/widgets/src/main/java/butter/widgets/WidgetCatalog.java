@@ -14,7 +14,8 @@ public final class WidgetCatalog {
         names.addAll(Arrays.asList(
                 "Row", "Column", "Grid", "Stack", "Panel", "Text", "Button", "Slider", "ProgressBar",
                 "EnergyBar", "FluidTank", "Slot", "Inventory", "PlayerInventory", "Tooltip", "Spacer",
-                "ItemGrid", "MachinePanel", "RecipeProgress", "UpgradeSlots"));
+                "ItemGrid", "MachinePanel", "RecipeProgress", "UpgradeSlots",
+                "SearchBar", "Tab", "TabBar", "Scrollbar", "Separator"));
     }
 
     public boolean known(String name) { return names.contains(name) || WidgetNames.builtin(name); }

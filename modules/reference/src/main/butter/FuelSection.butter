@@ -1,4 +1,4 @@
-component FuelSection() {
+public component FuelSection() {
   Row(
     class: "gap-4",
     children: [

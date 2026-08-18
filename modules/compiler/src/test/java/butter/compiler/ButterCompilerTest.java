@@ -30,20 +30,30 @@ public final class ButterCompilerTest {
             require(error.getMessage().contains("B1501"), "duplicate id");
         }
         WidgetSpec typed = ButterCompiler.compileSource("Card.butter",
-                "component Card(title: String, show: boolean = true) {\n"
+                "public component Card(title: String, show: boolean = true) {\n"
                         + "  Text(title, class: \"text-lg\")\n}\n"
                         + "Card(title: \"Reactor\", show: true)\n", null);
         require("Reactor".equals(typed.arguments().get(0)), "prop");
         try {
             ButterCompiler.compileSource("Mismatch.butter",
-                    "component ReactorHeader(title: String) { Text(title) }\nReactorHeader(title: 1)\n", null);
+                    "public component ReactorHeader(title: String) { Text(title) }\nReactorHeader(title: 1)\n",
+                    null);
             throw new IllegalStateException("type mismatch must fail");
         } catch (ButterCompileException error) {
             require(error.getMessage().contains("B1204") && error.getMessage().contains("title"), "B1204");
         }
+        try {
+            ButterCompiler.compileSource("Bare.butter", "component Bare() { Text(\"x\") }", null);
+            throw new IllegalStateException("bare component must fail");
+        } catch (ButterCompileException error) {
+            require(error.getMessage().contains("B1103"), "visibility");
+        }
         WidgetSpec paired = ButterCompiler.compileSource("Panel.butter",
                 "Button(\"Craft\", id: \"craft\", enabled: canCraft, action: craft)", Panel.class);
         require(paired.prop("action") != null, "action binding");
+        WidgetSpec chrome = ButterCompiler.compile(java.nio.file.Paths.get("examples/vanilla/Chrome.butter"));
+        require("Row".equals(chrome.type()) && chrome.children().size() == 3, "chrome row");
+        require("SearchBar".equals(chrome.children().get(1).children().get(0).type()), "search");
         try {
             ButterCompiler.compileSource("Panel.butter",
                     "Button(\"Craft\", action: missing)", Panel.class);

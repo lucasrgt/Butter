@@ -28,6 +28,11 @@ public final class WidgetSpecTest {
                 gridProps, Collections.<WidgetSpec>emptyList()));
         require(grid.children().size() == 3 && "grid-2".equals(grid.children().get(2).id()), "item grid");
         require("tooltip".equals(WidgetNames.role("Tooltip")), "tooltip");
+        require(WidgetNames.builtin("SearchBar") && "search".equals(WidgetNames.role("SearchBar")), "search");
+        require("tab".equals(WidgetNames.role("Tab")) && "tablist".equals(WidgetNames.role("TabBar")), "tabs");
+        require("scrollbar".equals(WidgetNames.role("Scrollbar"))
+                && "separator".equals(WidgetNames.role("Separator")), "chrome");
+        require(Utilities.unknownTokens("border-vanilla").isEmpty(), "bevel utility");
         java.util.Map<String, Integer> extra = new java.util.LinkedHashMap<String, Integer>();
         extra.put("vis", Integer.valueOf(0xFF2E8B57));
         Theme thaum = Theme.standard().extend(new Theme("thaumcraft", extra,

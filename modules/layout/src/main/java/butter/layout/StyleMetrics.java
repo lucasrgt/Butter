@@ -14,9 +14,10 @@ public final class StyleMetrics {
     public final String items;
     public final String justify;
     public final String background;
+    public final String border;
 
     public StyleMetrics(int padLeft, int padRight, int padTop, int padBottom, int gap, int width, int height,
-            boolean widthFull, int gridCols, String items, String justify, String background) {
+            boolean widthFull, int gridCols, String items, String justify, String background, String border) {
         this.padLeft = padLeft;
         this.padRight = padRight;
         this.padTop = padTop;
@@ -29,6 +30,7 @@ public final class StyleMetrics {
         this.items = items;
         this.justify = justify;
         this.background = background;
+        this.border = border;
     }
 
     public static StyleMetrics parse(String className) {

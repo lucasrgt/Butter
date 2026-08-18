@@ -1,4 +1,4 @@
-component ReactorControls() {
+public component ReactorControls() {
   Row(
     class: "gap-4",
     children: [

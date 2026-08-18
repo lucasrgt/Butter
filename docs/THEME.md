@@ -25,8 +25,11 @@ Allowed top-level key: `id`. Allowed tables: `[colors]`, `[slots]`,
 `[fonts]`. Values are quoted strings. Color strings are `#RRGGBB` or
 `#AARRGGBB`. Comments start with `#` outside strings.
 
-The host painter looks up `bg-*` names in the active theme. Slot texture
-paths are catalogued for later Minecraft painting; they do not replace
+The host painter looks up `bg-*` names in the active theme. `border-vanilla`
+enables the 1px raised bevel using `highlight`, `shadow`, and `border`. Slot
+texture paths are catalogued for later Minecraft painting; they do not replace
 the official-JAR pixel oracle.
 
-See `themes/vanilla.toml`, `themes/thaum.toml`, and `examples/thaum/`.
+Vanilla also catalogs `highlight`, `shadow`, `border`, and `muted` for chrome
+atoms. See `docs/LIBRARY.md`, `themes/vanilla.toml`, `themes/thaum.toml`, and
+`examples/thaum/`.

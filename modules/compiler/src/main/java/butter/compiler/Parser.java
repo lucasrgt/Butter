@@ -22,7 +22,9 @@ final class Parser {
         ExprAst body = null;
         while (!at(TokenKind.EOF)) {
             if (at(TokenKind.LET)) lets.add(parseLet());
-            else if (at(TokenKind.PRIVATE) || at(TokenKind.COMPONENT)) components.add(parseComponent());
+            else if (at(TokenKind.PUBLIC) || at(TokenKind.PRIVATE) || at(TokenKind.COMPONENT)) {
+                components.add(parseComponent());
+            }
             else if (body == null) body = parseExpr();
             else throw error("B1101", "Multiple public components in one .butter file");
         }
@@ -38,6 +40,9 @@ final class Parser {
 
     private ComponentAst parseComponent() {
         boolean priv = match(TokenKind.PRIVATE);
+        if (!priv && !match(TokenKind.PUBLIC)) {
+            throw error("B1103", "A component must be public or private");
+        }
         consume(TokenKind.COMPONENT);
         String name = consume(TokenKind.IDENT).text;
         consume(TokenKind.LPAREN);

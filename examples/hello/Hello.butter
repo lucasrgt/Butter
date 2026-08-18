@@ -1,7 +1,9 @@
-Column(
-  class: "p-8 gap-4",
-  children: [
-    Text("ME Terminal", class: "text-lg font-bold"),
-    Button("Craft", id: "craft", class: "px-8 h-20 bg-accent")
-  ]
-)
+public component Hello() {
+  Column(
+    class: "p-8 gap-4",
+    children: [
+      Text("ME Terminal", class: "text-lg font-bold"),
+      Button("Craft", id: "craft", class: "px-8 h-20 bg-accent")
+    ]
+  )
+}

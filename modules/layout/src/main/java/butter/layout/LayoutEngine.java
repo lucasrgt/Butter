@@ -16,6 +16,7 @@ public final class LayoutEngine {
         if ("Row".equals(type)) return row(spec, style, constraints, inner, false);
         if ("Column".equals(type) || "Panel".equals(type) || "MachinePanel".equals(type))
             return row(spec, style, constraints, inner, true);
+        if ("TabBar".equals(type)) return row(tabSide(spec), style, constraints, inner, verticalSide(spec));
         if ("Stack".equals(type)) return stack(spec, style, constraints, inner);
         if ("Grid".equals(type) || "ItemGrid".equals(type) || "Inventory".equals(type)
                 || "PlayerInventory".equals(type)) return grid(spec, style, constraints, inner);
@@ -29,6 +30,7 @@ public final class LayoutEngine {
         int cursor = 0;
         int cross = 0;
         for (int index = 0; index < children.size(); index++) {
+            if (index > 0 && seam(children.get(index - 1).type(), children.get(index).type())) cursor -= 1;
             LayoutNode child = layout(children.get(index), inner);
             int x = vertical ? 0 : cursor;
             int y = vertical ? cursor : 0;
@@ -94,7 +96,7 @@ public final class LayoutEngine {
         int width = style.width;
         int height = style.height;
         if (width <= 0) width = measureWidth(spec);
-        if (height <= 0) height = "Button".equals(spec.type()) ? 20 : 8;
+        if (height <= 0) height = measureHeight(spec);
         width += style.padX();
         height += style.padY();
         if (style.widthFull) width = outer.maxWidth;
@@ -102,11 +104,45 @@ public final class LayoutEngine {
                 Collections.<LayoutNode>emptyList());
     }
 
+    private static WidgetSpec tabSide(WidgetSpec spec) {
+        Object side = spec.prop("side");
+        if (side == null) return spec;
+        List<WidgetSpec> source = spec.children();
+        List<WidgetSpec> children = new ArrayList<WidgetSpec>();
+        for (int index = 0; index < source.size(); index++) {
+            WidgetSpec child = source.get(index);
+            children.add("Tab".equals(child.type()) ? child.withProp("side", side) : child);
+        }
+        return spec.withChildren(children);
+    }
+
+    private static boolean seam(String left, String right) {
+        return "TabBar".equals(left) && "Panel".equals(right)
+                || "Panel".equals(left) && "TabBar".equals(right);
+    }
+
+    private static boolean verticalSide(WidgetSpec spec) {
+        Object side = spec.prop("side");
+        return "left".equals(side) || "right".equals(side);
+    }
+
     private static int measureWidth(WidgetSpec spec) {
+        if ("SearchBar".equals(spec.type())) return 88;
+        if ("Scrollbar".equals(spec.type())) return 6;
+        if ("Separator".equals(spec.type())) return 16;
         if (!spec.arguments().isEmpty() && spec.arguments().get(0) instanceof String) {
             return Math.max(16, ((String) spec.arguments().get(0)).length() * 6);
         }
         if ("Slot".equals(spec.type()) || "FluidTank".equals(spec.type()) || "EnergyBar".equals(spec.type())) return 18;
         return 16;
+    }
+
+    private static int measureHeight(WidgetSpec spec) {
+        if ("SearchBar".equals(spec.type())) return 12;
+        if ("Tab".equals(spec.type())) return 16;
+        if ("Scrollbar".equals(spec.type())) return 54;
+        if ("Separator".equals(spec.type())) return 2;
+        if ("Button".equals(spec.type())) return 20;
+        return 8;
     }
 }

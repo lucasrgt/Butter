@@ -7,6 +7,7 @@ public final class WidgetCatalogTest {
         WidgetCatalog catalog = new WidgetCatalog();
         require(catalog.known("Slot") && catalog.known("PlayerInventory") && catalog.known("Tooltip"), "vanilla");
         require(catalog.known("EnergyBar") && catalog.known("FluidTank"), "machines");
+        require(catalog.known("SearchBar") && catalog.known("TabBar") && catalog.known("Scrollbar"), "chrome");
         catalog.register("ReactorGraph");
         require(catalog.known("ReactorGraph"), "native pack");
         System.out.println("  widgets: core/vanilla/machine catalog");

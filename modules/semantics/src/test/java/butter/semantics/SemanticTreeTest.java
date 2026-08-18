@@ -25,6 +25,17 @@ public final class SemanticTreeTest {
         WidgetSpec alias = ButterCompiler.compileSource("Alias.butter",
                 "FluidTank(id: \"old\", semantics: (id: \"old\", role: fluid_tank, label: \"Tank\"))", null);
         require("tank".equals(SemanticTree.of(alias).byId("old").role), "alias");
+        SemanticTree chrome = SemanticTree.of(ButterCompiler.compileSource("Chrome.butter",
+                "Column(children: [SearchBar(id: \"search\", placeholder: \"Search...\"),"
+                        + " Tab(\"Name\", id: \"sort-name\"), Scrollbar(id: \"scroll\", value: 3, max: 10)])",
+                null));
+        require("search".equals(chrome.byId("search").role)
+                && chrome.byId("search").actions.contains("click"), "search");
+        require("Search...".equals(chrome.byId("search").label), "placeholder label");
+        require("tab".equals(chrome.byId("sort-name").role)
+                && chrome.byId("sort-name").actions.contains("click"), "tab");
+        require("scrollbar".equals(chrome.byId("scroll").role)
+                && chrome.byId("scroll").actions.contains("set_value"), "scrollbar");
         System.out.println("  semantics: inferred and declared roles");
     }
 

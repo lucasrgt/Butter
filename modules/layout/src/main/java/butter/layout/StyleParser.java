@@ -9,8 +9,9 @@ final class StyleParser {
         String items = "start";
         String justify = "start";
         String background = "";
+        String border = "";
         if (className == null || className.trim().isEmpty()) {
-            return new StyleMetrics(0, 0, 0, 0, 0, 0, 0, false, 0, items, justify, background);
+            return new StyleMetrics(0, 0, 0, 0, 0, 0, 0, false, 0, items, justify, background, border);
         }
         String[] tokens = className.trim().split("\\s+");
         for (int index = 0; index < tokens.length; index++) {
@@ -19,6 +20,7 @@ final class StyleParser {
             else if (token.startsWith("items-")) items = token.substring(6);
             else if (token.startsWith("justify-")) justify = token.substring(8);
             else if (token.startsWith("bg-")) background = token.substring(3);
+            else if (token.startsWith("border-")) border = token.substring(7);
             else if (token.startsWith("grid-cols-")) gridCols = number(token.substring(10));
             else if (token.startsWith("gap-")) gap = number(token.substring(4));
             else if (token.startsWith("px-")) { padLeft = padRight = number(token.substring(3)); }
@@ -34,7 +36,7 @@ final class StyleParser {
             else if (token.startsWith("h-") && !token.equals("h-full")) height = number(token.substring(2));
         }
         return new StyleMetrics(padLeft, padRight, padTop, padBottom, gap, width, height, widthFull,
-                gridCols, items, justify, background);
+                gridCols, items, justify, background, border);
     }
 
     private static String strip(String token) {

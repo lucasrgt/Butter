@@ -45,6 +45,12 @@ public final class WidgetSpec {
         return new WidgetSpec(type, key, arguments, props, next);
     }
 
+    public WidgetSpec withProp(String name, Object value) {
+        Map<String, Object> next = new LinkedHashMap<String, Object>(props);
+        next.put(name, value);
+        return new WidgetSpec(type, key, arguments, next, children);
+    }
+
     private static List<Object> freezeValues(List<Object> values) {
         if (values == null || values.isEmpty()) return Collections.emptyList();
         return Collections.unmodifiableList(new java.util.ArrayList<Object>(values));

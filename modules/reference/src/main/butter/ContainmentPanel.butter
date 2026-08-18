@@ -1,4 +1,4 @@
-component ContainmentPanel() {
+public component ContainmentPanel() {
   Panel(
     class: "p-4 bg-panel",
     children: [

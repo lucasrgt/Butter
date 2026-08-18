@@ -16,6 +16,7 @@ public final class ButterRuntime {
     private final WidgetSpec template;
     private final Object backing;
     private final Resolver resolver;
+    private final ChromeHost chrome = new ChromeHost();
     private WidgetSpec resolved;
     private LayoutNode layout;
     private SemanticTree semantics;
@@ -49,21 +50,53 @@ public final class ButterRuntime {
     public void click(String id) {
         WidgetSpec spec = find(resolved, id);
         if (spec == null) throw new IllegalStateException("no widget " + id);
+        boolean handled = chrome.click(resolved, spec);
         Object action = spec.prop("action");
-        if (action == null || "null".equals(String.valueOf(action))) {
-            if ("Slot".equals(spec.type())) return;
-            throw new IllegalStateException("no action on " + id);
+        if (action != null && !"null".equals(String.valueOf(action))) {
+            String name = action instanceof Binding ? ((Binding) action).path() : String.valueOf(action);
+            resolver.invokeAction(name);
+            rebuild();
+            return;
         }
-        String name = action instanceof Binding ? ((Binding) action).path() : String.valueOf(action);
-        resolver.invokeAction(name);
+        if (handled) rebuild();
+        else if (!"Slot".equals(spec.type())) throw new IllegalStateException("no action on " + id);
+    }
+
+    public boolean type(char ch) {
+        if (ch < 32 || ch == 127) return false;
+        if (!chrome.type(ch, template, resolved, resolver)) return false;
         rebuild();
+        return true;
+    }
+
+    public boolean backspace() {
+        if (!chrome.backspace(template, resolved, resolver)) return false;
+        rebuild();
+        return true;
+    }
+
+    public void pointer(String id, int localY, int height) {
+        WidgetSpec spec = find(resolved, id);
+        if (spec == null) throw new IllegalStateException("no widget " + id);
+        if (chrome.pointer(template, spec, localY, height, resolver)) rebuild();
+        else click(id);
     }
 
     public void rebuild() {
-        resolved = WidgetExpander.expand(resolver.resolve(template));
+        resolved = chrome.apply(WidgetExpander.expand(resolver.resolve(template)));
         layout = LayoutEngine.layout(resolved, BoxConstraints.loose(427, 240));
         semantics = SemanticTree.of(resolved);
         generation++;
+    }
+
+    static WidgetSpec find(WidgetSpec spec, String id) {
+        if (id != null && id.equals(spec.id())) return spec;
+        java.util.List<WidgetSpec> children = spec.children();
+        for (int index = 0; index < children.size(); index++) {
+            WidgetSpec match = find(children.get(index), id);
+            if (match != null) return match;
+        }
+        return null;
     }
 
     private void listen(Object target) {
@@ -79,15 +112,5 @@ public final class ButterRuntime {
                 else if (value instanceof Computed) ((Computed<?>) value).add(invalidate);
             } catch (IllegalAccessException ignored) { }
         }
-    }
-
-    private static WidgetSpec find(WidgetSpec spec, String id) {
-        if (id != null && id.equals(spec.id())) return spec;
-        java.util.List<WidgetSpec> children = spec.children();
-        for (int index = 0; index < children.size(); index++) {
-            WidgetSpec match = find(children.get(index), id);
-            if (match != null) return match;
-        }
-        return null;
     }
 }

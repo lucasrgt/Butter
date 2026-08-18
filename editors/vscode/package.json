@@ -32,7 +32,7 @@
       {
         "language": "butter",
         "scopeName": "source.butter",
-        "path": "../Butter.tmbundle/Syntaxes/Butter.tmLanguage.json"
+        "path": "./syntaxes/butter.tmLanguage.json"
       }
     ],
     "configuration": {

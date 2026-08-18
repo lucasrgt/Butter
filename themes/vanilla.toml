@@ -9,6 +9,10 @@ button = "#8B8B8B"
 text = "#FFFFFF"
 energy = "#44CC44"
 slot = "#1A1A1A"
+highlight = "#FFFFFF"
+shadow = "#555555"
+border = "#000000"
+muted = "#A0A0A0"
 
 [slots]
 vanilla = "gui/slot.png"

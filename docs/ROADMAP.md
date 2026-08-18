@@ -19,6 +19,7 @@ gate are committed.
 | B9 | Host painters plus mapped stack-count overlay | GO |
 | B10 | Fusion reactor reference screen | GO - host E2E |
 | Theme catalog | Fail-closed TOML colors and slot names | GO - host |
+| Vanilla chrome | SearchBar, Tab, TabBar, Scrollbar, Separator | GO - host |
 | Editor grammar | TextMate highlight + `butter format` | GO - host |
 | Worldline smoke | Mapped live `ButterGuiScreen` via `GameUi` | GO - `--runtime` |
 | Minecraft pixels | Official-JAR framebuffer / GL item icons | Blocked on Worldline M10 |
@@ -28,6 +29,9 @@ gate are committed.
 - No official-JAR framebuffer match (Worldline M10).
 - No GL item sprites; mapped screens paint `drawRect` / `drawString` counts.
 - Slot click is cursor swap, not vanilla merge/shift-click.
+- SearchBar is host text (click, type, backspace), not vanilla `GuiTextField` pixels.
+- Tabs merge as a 1px host bevel against an adjacent `Panel`, not Retronism PNG.
+- Scrollbar pointer sets `value`; it is track plus thumb, not Aero 9-slice.
 - No StationAPI requirement or adapter.
 - No public `watch()` API.
 - No HTML or browser emulation.

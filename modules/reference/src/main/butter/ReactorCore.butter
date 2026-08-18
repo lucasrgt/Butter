@@ -1,4 +1,4 @@
-component ReactorCore() {
+public component ReactorCore() {
   Panel(
     class: "p-4 gap-2 bg-panel",
     children: [

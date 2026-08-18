@@ -1,8 +1,10 @@
-Column(
-  class: "p-8 gap-4 bg-panel",
-  children: [
-    Text("Research Table", class: "text-lg"),
-    Slot(id: "aspect", class: "slot-research"),
-    Button("Scribe", id: "scribe", class: "px-8 h-20 bg-arcane")
-  ]
-)
+public component Research() {
+  Column(
+    class: "p-8 gap-4 bg-panel",
+    children: [
+      Text("Research Table", class: "text-lg"),
+      Slot(id: "aspect", class: "slot-research"),
+      Button("Scribe", id: "scribe", class: "px-8 h-20 bg-arcane")
+    ]
+  )
+}

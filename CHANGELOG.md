@@ -2,10 +2,17 @@
 
 ## Unreleased - Minecraft HostUi adapter
 
+- Added vanilla chrome atoms (`SearchBar`, `Tab`, `TabBar`, `Scrollbar`,
+  `Separator`) and `border-vanilla` 1px bevel. SearchBar types on the host,
+  tabs select and overlap an adjacent panel by 1px, scrollbar pointer sets
+  `value`. See `docs/LIBRARY.md`.
+- Named `component` declarations require `public` or `private`. The fusion
+  reactor screen uses `public component FusionReactorPanel` instead of a
+  trailing widget tree.
 - Added a fail-closed TOML theme catalog (`theme.toml`) that extends vanilla
   colors and slot names. Unknown `bg-*` tokens remain compile errors.
-- Added `butter format` and editor grammars (VS Code extension plus IntelliJ
-  TextMate bundle) for `.butter` files.
+- Added `butter format` and editor grammars (Cursor/VS Code extension plus
+  IntelliJ TextMate bundle) for `.butter` files.
 - Aligned overlapping widget roles with Worldline (`slot`, `tank`, `energy`).
 - Added `HostUi` / `HostUiNode` so Worldline can consume a flattened tree
   without importing Butter into `worldline-api`.

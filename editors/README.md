@@ -1,15 +1,30 @@
 # Editor support
 
 Highlighting uses one TextMate grammar. Format uses the Java compiler.
+Cursor and VS Code share `editors/vscode`. IntelliJ uses the TextMate bundle.
+
+## Cursor
+
+This repository already sets `*.butter` and format-on-save in
+`.vscode/settings.json` (Cursor reads that folder). Install the extension
+once so the language id `butter` exists:
+
+```text
+cursor --install-extension path/to/butter.vsix
+```
+
+Or Command Palette → **Developer: Install Extension from Location** →
+`editors/vscode`. Reload the window after install. Format still needs
+`java tools/harness/Verify.java` so `.butter/build` exists.
 
 ## VS Code
 
-Install the folder `editors/vscode` with **Install from VSIX** after packaging,
-or **Developer: Install Extension from Location**.
+Same extension folder as Cursor: `editors/vscode`. Install from location or
+from a VSIX. The grammar copy inside the extension must match
+`editors/Butter.tmbundle` (the harness checks that).
 
-The grammar lives in `editors/Butter.tmbundle`. Format on save calls
-`butter format --stdin` against `.butter/build/classes` produced by
-`java tools/harness/Verify.java`. Set `butter.java` if `java` is not on PATH.
+Format on save calls `butter format --stdin` against `.butter/build/classes`.
+Set `butter.java` if `java` is not on PATH.
 
 ## IntelliJ IDEA
 

@@ -14,12 +14,13 @@ public final class ButterFormatterTest {
         String again = ButterFormatter.format("Hello.butter", compact);
         require(again.equals(compact), "idempotent");
         String nested = ButterFormatter.format("Card.butter",
-                "component Card(title: String, show: boolean = true) { Text(title) } Card(title: \"Reactor\")");
-        require(nested.contains("component Card(title: String, show: boolean = true)"), "params");
+                "public component Card(title: String, show: boolean = true) { Text(title) } Card(title: \"Reactor\")");
+        require(nested.contains("public component Card(title: String, show: boolean = true)"), "params");
         require(nested.contains("Card(title: \"Reactor\")\n"), "body call");
         String[] files = {
                 "examples/hello/Hello.butter",
                 "examples/thaum/Research.butter",
+                "examples/vanilla/Chrome.butter",
                 "modules/reference/src/main/butter/FusionReactorPanel.butter",
                 "modules/reference/src/main/butter/FuelSection.butter",
                 "modules/reference/src/main/butter/ReactorControls.butter",

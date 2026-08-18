@@ -1,0 +1,27 @@
+public component Chrome() {
+  Row(
+    class: "gap-0",
+    children: [
+      TabBar(
+        side: "left",
+        children: [
+          Tab("Name", id: "sort-name", selected: true),
+          Tab("Size", id: "sort-size")
+        ]
+      ),
+      Panel(
+        class: "p-8 gap-4 bg-panel border-vanilla",
+        children: [
+          SearchBar(id: "search", placeholder: "Search..."),
+          Separator(class: "w-88")
+        ]
+      ),
+      Scrollbar(
+        id: "scroll",
+        value: 0,
+        max: 10,
+        class: "h-54"
+      )
+    ]
+  )
+}

@@ -22,6 +22,30 @@ public final class LayoutEngineTest {
         require(node.children.get(1).bounds.y > node.children.get(0).bounds.y, "vertical");
         require(StyleMetrics.parse("p-8 gap-4").gap == 4, "gap");
         require(StyleMetrics.parse("px-8 h-20").height == 20, "button height");
+        LayoutNode search = LayoutEngine.layout(new WidgetSpec("SearchBar", null, Collections.emptyList(),
+                Collections.<String, Object>emptyMap(), Collections.<WidgetSpec>emptyList()),
+                BoxConstraints.loose(200, 80));
+        require(search.bounds.width == 88 && search.bounds.height == 12, "search bar");
+        java.util.List<WidgetSpec> tabs = new java.util.ArrayList<WidgetSpec>();
+        tabs.add(new WidgetSpec("Tab", null, Collections.<Object>singletonList("Name"),
+                Collections.<String, Object>emptyMap(), Collections.<WidgetSpec>emptyList()));
+        tabs.add(new WidgetSpec("Tab", null, Collections.<Object>singletonList("Size"),
+                Collections.<String, Object>emptyMap(), Collections.<WidgetSpec>emptyList()));
+        LayoutNode bar = LayoutEngine.layout(new WidgetSpec("TabBar", null, Collections.emptyList(),
+                Collections.<String, Object>singletonMap("side", "left"), tabs),
+                BoxConstraints.loose(200, 80));
+        require(bar.children.get(1).bounds.y > bar.children.get(0).bounds.y, "tab side");
+        require("vanilla".equals(StyleMetrics.parse("border-vanilla").border), "bevel class");
+        java.util.List<WidgetSpec> seamKids = new java.util.ArrayList<WidgetSpec>();
+        seamKids.add(new WidgetSpec("TabBar", null, Collections.emptyList(),
+                Collections.<String, Object>singletonMap("side", "left"), tabs.subList(0, 1)));
+        seamKids.add(new WidgetSpec("Panel", null, Collections.emptyList(),
+                Collections.<String, Object>singletonMap("class", "w-40 h-40"),
+                Collections.<WidgetSpec>emptyList()));
+        LayoutNode seam = LayoutEngine.layout(new WidgetSpec("Row", null, Collections.emptyList(),
+                Collections.<String, Object>singletonMap("class", "gap-0"), seamKids),
+                BoxConstraints.loose(200, 80));
+        require(seam.children.get(1).bounds.x == seam.children.get(0).bounds.width - 1, "tab seam");
         System.out.println("  layout: column packing");
     }
 

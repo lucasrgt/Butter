@@ -1,6 +1,6 @@
 <h1 align="center">Butter</h1>
 
-<p align="center"><strong>Declarative, reactive, and testable UI for Minecraft Beta 1.7.3.</strong></p>
+<p align="center"><strong>Flutter and Tailwind inspired UI for Minecraft Beta 1.7.3.</strong></p>
 
 <p align="center">
   <a href="#getting-started">Getting Started</a> |
@@ -11,16 +11,17 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/milestone-v0.1.0%20host%20runtime%20GO-2EA44F?style=flat-square" alt="v0.1.0 host runtime GO">
+  <img src="https://img.shields.io/badge/inspired%20by-Flutter%20%2B%20Tailwind-02569B?style=flat-square" alt="Flutter and Tailwind inspired">
   <img src="https://img.shields.io/badge/Minecraft-Beta%201.7.3-62B47A?style=flat-square" alt="Minecraft Beta 1.7.3">
   <img src="https://img.shields.io/badge/product-Java%208-5586A4?style=flat-square" alt="Java 8 product">
   <img src="https://img.shields.io/badge/harness-JDK%2021-6B5B95?style=flat-square" alt="JDK 21 harness">
 </p>
 
-Butter is a compiler-first UI framework for Minecraft Beta 1.7.3. Screens are
-Flutter-style component trees in `.butter` files, paired with typed Java
-backing classes. Angular-style contracts and signals own behavior. A
-fail-closed utility catalog and TOML theme own style. A semantic tree is
-what Worldline and tests query.
+Butter is a compiler-first UI framework for Minecraft Beta 1.7.3, inspired by
+Flutter and Tailwind. Screens are Flutter-style component trees in `.butter`
+files, paired with typed Java backing classes. Angular-style contracts and
+signals own behavior. A fail-closed Tailwind-like utility catalog and TOML
+theme own style. A semantic tree is what Worldline and tests query.
 
 The player runtime is a small Java library plus a Minecraft-native adapter.
 Worldline is the laboratory used to validate Butter. Players do not need
@@ -82,16 +83,18 @@ replace an official-JAR pixel oracle.
 Preferred form is Flutter-like named parameters. Save as `Hello.butter`:
 
 ```text
-Column(
-  class: "p-8 gap-4",
-  children: [
-    Text("ME Terminal", class: "text-lg font-bold"),
-    Button("Craft", id: "craft", class: "px-8 h-20 bg-accent")
-  ]
-)
+public component Hello() {
+  Column(
+    class: "p-8 gap-4",
+    children: [
+      Text("ME Terminal", class: "text-lg font-bold"),
+      Button("Craft", id: "craft", class: "px-8 h-20 bg-accent")
+    ]
+  )
+}
 ```
 
-A file exposes exactly one public component. Private `component` helpers and
+A file exposes exactly one `public component`. `private component` helpers and
 `let` bindings may share the file. `let` is composition, not reactive state.
 
 A working copy lives at [`examples/hello/Hello.butter`](examples/hello/Hello.butter).
@@ -124,7 +127,8 @@ java -cp ... butter.cli.ButterCli format examples/hello/Hello.butter
 
 On Unix classpaths, replace `;` with `:`. `format --stdout` and `format --stdin`
 exist for editor integration. Invalid templates fail closed; the formatter
-does not invent syntax.
+does not invent syntax. Cursor highlighting is the VS Code extension in
+[`editors/vscode`](editors/vscode); see [`editors/README.md`](editors/README.md).
 
 Place `theme.toml` next to a `.butter` file or directory to extend vanilla
 colors. See [`docs/THEME.md`](docs/THEME.md) and [`examples/thaum/`](examples/thaum/).
@@ -162,7 +166,7 @@ semantic tree; it does not own Butter widget metadata.
 
 | Capability | What it provides |
 | --- | --- |
-| `.butter` syntax | Named parameters, lists, records, `component`, `private component`, `let` |
+| `.butter` syntax | Named parameters, lists, records, `public component`, `private component`, `let` |
 | Fail-closed diagnostics | `BUTTER B####` for unknown utilities, types, actions, and duplicate IDs |
 | Java contracts | `@ButterComponent` template pairing and `@ButterAction` methods |
 | Pretty-printer | Deterministic `butter format` from the same parser the compiler uses |
@@ -172,7 +176,7 @@ semantic tree; it does not own Butter widget metadata.
 | Capability | What it provides |
 | --- | --- |
 | Layout | `Row`, `Column`, `Stack`, `Grid`, padding, gap, width/height, alignment |
-| Chrome | `Panel`, `Text`, `Button`, `Slider`, `Tooltip`, `Spacer` |
+| Chrome | `Panel`, `Text`, `Button`, `Slider`, `Tooltip`, `Spacer`, `SearchBar`, `Tab`, `TabBar`, `Scrollbar`, `Separator` |
 | Machine widgets | `EnergyBar`, `ProgressBar`, `FluidTank`, `MachinePanel`, `RecipeProgress` |
 | Inventory | `Slot`, `PlayerInventory`, `ItemGrid`, `UpgradeSlots` expand into slots |
 | Host framebuffer | Deterministic `HostRenderer` fills, glyphs, and hit testing |
@@ -193,7 +197,7 @@ semantic tree; it does not own Butter widget metadata.
 
 | Capability | What it provides |
 | --- | --- |
-| Vanilla catalog | Built-in `panel`, `accent`, `tooltip`, `button`, `text`, `energy`, `slot` |
+| Vanilla catalog | Built-in `panel`, `accent`, `tooltip`, `button`, `text`, `energy`, `slot`, `highlight`, `shadow`, `border`, `muted` |
 | TOML overlay | `id`, `[colors]`, `[slots]`, `[fonts]`; `#RRGGBB` / `#AARRGGBB` |
 | Token unlock | A color named `vis` makes `bg-vis` and `border-vis` legal |
 | Host lookup | `HostRenderer` paints `bg-*` from the active theme |
@@ -206,7 +210,7 @@ A public component can compose private helpers. Bindings stay symbolic until
 mount:
 
 ```text
-component ReactorControls() {
+public component ReactorControls() {
   Row(
     class: "gap-4",
     children: [
@@ -254,6 +258,7 @@ The compiler is the gate; the harness is the second gate.
 | --- | --- |
 | Unexpected syntax | `B1001` |
 | Multiple public components | `B1101` |
+| Component missing `public` or `private` | `B1103` |
 | Property type mismatch | `B1204` |
 | Unknown utility token | `B1301` |
 | Missing `@ButterAction` | `B1401` |
@@ -315,9 +320,11 @@ The behavioral and engineering constitution is in [`AGENTS.md`](AGENTS.md).
 | [Architecture](docs/ARCHITECTURE.md) | Module order, compile-time vs runtime boundaries |
 | [Syntax](docs/SYNTAX.md) | `.butter` form, components, utilities |
 | [Themes](docs/THEME.md) | Fail-closed TOML catalog and token unlock |
+| [Library](docs/LIBRARY.md) | Vanilla chrome atoms mapped from Aero / Retronism / ME |
 | [Semantics](docs/SEMANTICS.md) | Roles, `HostUi` flattening, slot export |
 | [Worldline](docs/WORLDLINE.md) | Reflection bind, lab `open`/`putMain`, non-claims |
 | [Roadmap](docs/ROADMAP.md) | GO stages and v0.1.0 non-claims |
+| [Editor support](editors/README.md) | Cursor/VS Code extension and IntelliJ TextMate bundle |
 | [Live HostUi map](smokes/hostui-live/MAP.md) | Mapped two-process smoke boundary |
 | [Changelog](CHANGELOG.md) | Unreleased adapter work and 0.1.0 host runtime |
 | [Engineering guide](AGENTS.md) | Constitution and canonical verify commands |
@@ -325,6 +332,7 @@ The behavioral and engineering constitution is in [`AGENTS.md`](AGENTS.md).
 Useful direct links:
 
 - [Hello template](examples/hello/Hello.butter)
+- [Vanilla chrome example](examples/vanilla/Chrome.butter)
 - [Thaumcraft-style theme example](examples/thaum/)
 - [Vanilla theme catalog](themes/vanilla.toml)
 - [Fusion reactor backing class](modules/reference/src/main/java/butter/reference/FusionReactorPanel.java)

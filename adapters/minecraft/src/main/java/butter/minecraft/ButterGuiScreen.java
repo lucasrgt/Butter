@@ -36,9 +36,23 @@ public final class ButterGuiScreen extends GuiScreen implements HostUi {
     }
 
     protected void mouseClicked(int x, int y, int button) {
-        String id = layout == null ? null : HitTest.idAt(layout, x, y);
-        if (id != null) click(id);
-        else super.mouseClicked(x, y, button);
+        HitTest.Hit hit = layout == null ? null : HitTest.at(layout, x, y);
+        if (hit != null) {
+            if (MinecraftInventory.click(this.mc == null ? null : this.mc.thePlayer, runtime.tree(), hit.id)) return;
+            runtime.pointer(hit.id, hit.localY, hit.height);
+            return;
+        }
+        super.mouseClicked(x, y, button);
+    }
+
+    protected void keyTyped(char typed, int key) {
+        if (key == 1) {
+            super.keyTyped(typed, key);
+            return;
+        }
+        if (key == 14 && runtime.backspace()) return;
+        if (typed >= 32 && typed < 127 && runtime.type(typed)) return;
+        super.keyTyped(typed, key);
     }
 
     public boolean doesGuiPauseGame() { return false; }

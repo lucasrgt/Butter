@@ -1,4 +1,4 @@
-component ReactorHistory() {
+public component ReactorHistory() {
   Panel(
     class: "p-4 bg-panel",
     children: [

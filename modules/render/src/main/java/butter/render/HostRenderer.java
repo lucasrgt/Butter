@@ -46,6 +46,7 @@ public final class HostRenderer {
             return;
         }
         fill(canvas, node, x, y, box);
+        VanillaChrome.decorate(canvas, node, theme, x, y, box);
         List<LayoutNode> children = node.children;
         for (int index = 0; index < children.size(); index++) paint(children.get(index), canvas, x, y);
     }
@@ -53,7 +54,7 @@ public final class HostRenderer {
     private void fill(HostCanvas canvas, LayoutNode node, int x, int y, Rect box) {
         String type = node.widget.type();
         String bg = butter.layout.StyleMetrics.parse(node.widget.className()).background;
-        int color = fillColor(type, bg);
+        int color = fillColor(node, bg);
         if (color != 0) canvas.fill(x, y, box.width, box.height, color);
         if ("EnergyBar".equals(type) || "ProgressBar".equals(type)) {
             canvas.fill(x, y, Math.max(1, barWidth(node, box.width)), box.height, theme.color("energy"));
@@ -63,12 +64,18 @@ public final class HostRenderer {
         } else if ("Slot".equals(type)) slotGlyph(canvas, node, x, y);
     }
 
-    private int fillColor(String type, String bg) {
+    private int fillColor(LayoutNode node, String bg) {
+        String type = node.widget.type();
         if (bg != null && !bg.isEmpty()) return theme.color(bg);
+        if ("Tab".equals(type)) {
+            return Boolean.TRUE.equals(node.widget.prop("selected")) ? theme.color("panel") : theme.color("button");
+        }
         if ("Button".equals(type)) return theme.color("button");
         if ("Panel".equals(type) || "Column".equals(type)) return theme.color("panel");
         if ("EnergyBar".equals(type) || "ProgressBar".equals(type)) return theme.color("panel");
-        if ("Slot".equals(type) || "FluidTank".equals(type)) return theme.color("slot");
+        if ("Slot".equals(type) || "FluidTank".equals(type) || "SearchBar".equals(type)
+                || "Scrollbar".equals(type)) return theme.color("slot");
+        if ("Separator".equals(type)) return theme.color("shadow");
         return 0;
     }
 

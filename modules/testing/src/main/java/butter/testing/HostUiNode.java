@@ -5,6 +5,8 @@ public final class HostUiNode {
     public static final String SCREEN = "screen", SLOT = "slot", INVENTORY = "inventory";
     public static final String PROGRESS = "progress", ENERGY = "energy", TANK = "tank";
     public static final String BUTTON = "button", TEXT = "text", SLIDER = "slider";
+    public static final String SEARCH = "search", TAB = "tab", TABLIST = "tablist";
+    public static final String SCROLLBAR = "scrollbar", SEPARATOR = "separator";
     private final String role, name;
     private final int index, itemId, count;
 

@@ -24,8 +24,9 @@ adapters/minecraft   mapped GuiScreen + HostUi (compiled by --runtime)
 The compiler resolves props, utilities, bindings, semantics, and the
 component graph before runtime when it can. `WidgetExpander` then turns
 empty `PlayerInventory` / `ItemGrid` / `UpgradeSlots` into `Slot` children.
-Runtime invalidation rebuilds the resolved tree when signals fire.
+Runtime invalidation rebuilds the resolved tree when signals fire. Vanilla
+chrome atoms are listed in `docs/LIBRARY.md`.
 
 `.butter` files never embed arbitrary Java. Complex logic lives in the
-backing class. One file exposes exactly one public component; private
+backing class. One file exposes exactly one `public component`; `private`
 components and `let` bindings may share that file.

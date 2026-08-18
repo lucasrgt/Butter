@@ -1,4 +1,4 @@
-component ReactorHeader(title: String = "Fusion Reactor") {
+public component ReactorHeader(title: String = "Fusion Reactor") {
   Row(
     class: "justify-between items-center",
     children: [

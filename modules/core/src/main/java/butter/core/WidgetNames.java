@@ -11,7 +11,7 @@ public final class WidgetNames {
             "Row", "Column", "Grid", "Stack", "Panel", "Text", "Button", "Slider", "ProgressBar",
             "EnergyBar", "FluidTank", "Slot", "Inventory", "PlayerInventory", "Tooltip", "Spacer",
             "ItemGrid", "MachinePanel", "RecipeProgress", "UpgradeSlots", "ReactorGraph",
-            "FusionInjector")));
+            "FusionInjector", "SearchBar", "Tab", "TabBar", "Scrollbar", "Separator")));
 
     private WidgetNames() {}
 
@@ -29,6 +29,11 @@ public final class WidgetNames {
         if ("MachinePanel".equals(name)) return "machine";
         if ("ReactorGraph".equals(name)) return "model";
         if ("Tooltip".equals(name)) return "tooltip";
+        if ("SearchBar".equals(name)) return "search";
+        if ("Tab".equals(name)) return "tab";
+        if ("TabBar".equals(name)) return "tablist";
+        if ("Scrollbar".equals(name)) return "scrollbar";
+        if ("Separator".equals(name)) return "separator";
         return "generic";
     }
 

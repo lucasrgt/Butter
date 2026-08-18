@@ -64,6 +64,10 @@ public final class Theme {
         colors.put("text", Integer.valueOf(0xFFFFFFFF));
         colors.put("energy", Integer.valueOf(0xFF44CC44));
         colors.put("slot", Integer.valueOf(0xFF1A1A1A));
+        colors.put("highlight", Integer.valueOf(0xFFFFFFFF));
+        colors.put("shadow", Integer.valueOf(0xFF555555));
+        colors.put("border", Integer.valueOf(0xFF000000));
+        colors.put("muted", Integer.valueOf(0xFFA0A0A0));
         Map<String, String> slots = new LinkedHashMap<String, String>();
         slots.put("vanilla", "gui/slot.png");
         return new Theme("vanilla", colors, slots, Collections.<String, String>emptyMap());

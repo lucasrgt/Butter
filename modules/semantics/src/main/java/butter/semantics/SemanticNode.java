@@ -43,10 +43,12 @@ public final class SemanticNode {
         role = butter.core.WidgetNames.canonical(role);
         String label = string(declared.get("label"));
         if (label == null && !spec.arguments().isEmpty()) label = String.valueOf(spec.arguments().get(0));
+        if (label == null && spec.prop("placeholder") != null) label = String.valueOf(spec.prop("placeholder"));
         boolean enabled = !(spec.prop("enabled") instanceof Boolean) || ((Boolean) spec.prop("enabled")).booleanValue();
         List<String> actions = new java.util.ArrayList<String>();
-        if (spec.prop("action") != null || "Button".equals(spec.type())) actions.add("click");
-        if ("Slider".equals(spec.type())) actions.add("set_value");
+        if (spec.prop("action") != null || "Button".equals(spec.type()) || "SearchBar".equals(spec.type())
+                || "Tab".equals(spec.type())) actions.add("click");
+        if ("Slider".equals(spec.type()) || "Scrollbar".equals(spec.type())) actions.add("set_value");
         if ("Slot".equals(spec.type())) { actions.add("click"); actions.add("right_click"); }
         Object value = spec.prop("value");
         if ("slot".equals(role) && spec.prop("count") != null) value = spec.prop("count");

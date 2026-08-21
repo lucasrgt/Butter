@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Added external Worldline TestKit 0.1.0 consumer specs and a Java 21 runner
+  adapter. The specs depend only on the packaged Java 8 API and Butter's own
+  compiled module classes.
+
 ## Unreleased - Minecraft HostUi adapter
 
 - Added vanilla chrome atoms (`SearchBar`, `Tab`, `TabBar`, `Scrollbar`,

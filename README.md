@@ -78,6 +78,18 @@ java tools/harness/Verify.java --runtime
 Host-canvas tests do not replace that compile, and that compile does not
 replace an official-JAR pixel oracle.
 
+### Worldline TestKit consumer
+
+Butter also carries external Java 8 specs under `worldline-tests/`. They
+compile against the packaged Worldline TestKit API rather than Worldline
+repository sources and exercise formatting, compilation, runtime mounting,
+and semantic lookup in host-only mode. After setting `WORLDLINE_TESTKIT_HOME`
+to a TestKit 0.1.0 distribution, run:
+
+```text
+java tools/testkit/Run.java
+```
+
 ### 2. Author a template
 
 Preferred form is Flutter-like named parameters. Save as `Hello.butter`:

@@ -80,14 +80,13 @@ replace an official-JAR pixel oracle.
 
 ### Worldline TestKit consumer
 
-Butter also carries external Java 8 specs under `worldline-tests/`. They
-compile against the packaged Worldline TestKit API rather than Worldline
-repository sources and exercise formatting, compilation, runtime mounting,
-and semantic lookup in host-only mode. After setting `WORLDLINE_TESTKIT_HOME`
-to a TestKit 0.1.0 distribution, run:
+Butter carries external Java 8 specs under `tests/worldline/`. The isolated
+Gradle project uses `dev.worldline.test` 0.2.0 rather than Worldline repository
+sources and exercises formatting, compilation, runtime mounting, and semantic
+lookup in host-only mode. Run:
 
 ```text
-java tools/testkit/Run.java
+tests/worldline/gradlew.bat -p tests/worldline worldlineDoctor worldlineTest
 ```
 
 ### 2. Author a template

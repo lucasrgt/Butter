@@ -60,6 +60,9 @@ public final class ReleaseCheck {
                 if (relative.getNameCount() > 0 && excluded.contains(relative.getName(0).toString())) return;
                 String name = path.getFileName().toString().toLowerCase();
                 String normalized = relative.toString().replace('\\', '/').toLowerCase();
+                if (normalized.startsWith("tests/worldline/.gradle/")
+                        || normalized.startsWith("tests/worldline/build/")
+                        || normalized.equals("tests/worldline/gradle/wrapper/gradle-wrapper.jar")) return;
                 if (name.endsWith(".jar") || name.endsWith(".class")
                         || normalized.contains("minecraft/src/net/")
                         || normalized.contains("minecraft/bin/")) {

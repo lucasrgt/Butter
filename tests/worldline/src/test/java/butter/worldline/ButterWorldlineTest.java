@@ -11,7 +11,7 @@ import static worldline.test.Worldline.describe;
 import static worldline.test.Worldline.test;
 
 /** External TestKit consumer: no Worldline repository classes are compiled from source. */
-public final class ButterTestKitSpec extends WorldlineSpec {
+public final class ButterWorldlineTest extends WorldlineSpec {
     @Override protected void define() {
         describe("Butter authoring", () -> {
             test("formats a template", context -> expect(ButterFormatter.format(

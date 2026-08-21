@@ -2,8 +2,8 @@
 
 ## Unreleased
 
-- Added external Worldline TestKit 0.1.0 consumer specs and a Java 21 runner
-  adapter. The specs depend only on the packaged Java 8 API and Butter's own
+- Migrated the external suite to the isolated Worldline TestKit 0.2.0 Gradle
+  project under `tests/worldline`; specs remain Java 8 and use Butter's own
   compiled module classes.
 
 ## Unreleased - Minecraft HostUi adapter

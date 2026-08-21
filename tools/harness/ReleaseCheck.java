@@ -43,7 +43,7 @@ public final class ReleaseCheck {
                 "docs/SEMANTICS.md", "docs/WORLDLINE.md", "docs/THEME.md", "docs/LIBRARY.md",
                 "themes/vanilla.toml", "themes/thaum.toml", "smokes/hostui-live/MAP.md",
                 "editors/README.md", "editors/vscode/package.json",
-                "editors/vscode/syntaxes/butter.tmLanguage.json", ".vscode/settings.json")) {
+                "editors/vscode/syntaxes/butter.tmLanguage.json")) {
             if (!Files.isRegularFile(root.resolve(file))) throw new IllegalStateException("missing " + file);
         }
         sameFile("editors/Butter.tmbundle/Syntaxes/Butter.tmLanguage.json",

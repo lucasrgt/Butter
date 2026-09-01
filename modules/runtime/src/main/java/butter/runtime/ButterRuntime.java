@@ -17,6 +17,7 @@ public final class ButterRuntime {
     private final Object backing;
     private final Resolver resolver;
     private final ChromeHost chrome = new ChromeHost();
+    private final ControlHost controls = new ControlHost();
     private WidgetSpec resolved;
     private LayoutNode layout;
     private SemanticTree semantics;
@@ -50,7 +51,7 @@ public final class ButterRuntime {
     public void click(String id) {
         WidgetSpec spec = find(resolved, id);
         if (spec == null) throw new IllegalStateException("no widget " + id);
-        boolean handled = chrome.click(resolved, spec);
+        boolean handled = chrome.click(resolved, spec) || controls.click(template, spec, resolver);
         Object action = spec.prop("action");
         if (action != null && !"null".equals(String.valueOf(action))) {
             String name = action instanceof Binding ? ((Binding) action).path() : String.valueOf(action);
@@ -76,14 +77,38 @@ public final class ButterRuntime {
     }
 
     public void pointer(String id, int localY, int height) {
+        pointer(id, 0, localY, 1, height);
+    }
+
+    public void pointer(String id, int localX, int localY, int width, int height) {
         WidgetSpec spec = find(resolved, id);
         if (spec == null) throw new IllegalStateException("no widget " + id);
-        if (chrome.pointer(template, spec, localY, height, resolver)) rebuild();
+        if (chrome.pointer(template, spec, localY, height, resolver)
+                || controls.pointer(template, spec, localX, width, resolver)) rebuild();
         else click(id);
     }
 
+    public void hover(String id) {
+        if (controls.hover(id)) rebuild();
+    }
+
+    public void setValue(String id, int value) {
+        WidgetSpec spec = find(resolved, id);
+        if (spec == null) throw new IllegalStateException("no widget " + id);
+        if (chrome.setValue(template, spec, value, resolver) || controls.setValue(template, spec, value, resolver)) {
+            rebuild();
+        }
+    }
+
+    public void rightClick(String id) {
+        WidgetSpec spec = find(resolved, id);
+        if (spec == null) throw new IllegalStateException("no widget " + id);
+        if ("Slot".equals(spec.type())) return;
+        click(id);
+    }
+
     public void rebuild() {
-        resolved = chrome.apply(WidgetExpander.expand(resolver.resolve(template)));
+        resolved = GridFilter.apply(controls.apply(chrome.apply(WidgetExpander.expand(resolver.resolve(template)))));
         layout = LayoutEngine.layout(resolved, BoxConstraints.loose(427, 240));
         semantics = SemanticTree.of(resolved);
         generation++;

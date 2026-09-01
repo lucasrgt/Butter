@@ -30,6 +30,9 @@ public final class ButterGuiScreen extends GuiScreen implements HostUi {
 
     public void drawScreen(int mouseX, int mouseY, float tick) {
         relayout();
+        HitTest.Hit hover = layout == null ? null : HitTest.at(layout, mouseX, mouseY);
+        runtime.hover(hover == null ? null : hover.id);
+        relayout();
         renderer.paint(layout, new MinecraftCanvas(this));
         MinecraftInventory.paint(this, layout, this.mc == null ? null : this.mc.thePlayer);
         super.drawScreen(mouseX, mouseY, tick);
@@ -38,8 +41,15 @@ public final class ButterGuiScreen extends GuiScreen implements HostUi {
     protected void mouseClicked(int x, int y, int button) {
         HitTest.Hit hit = layout == null ? null : HitTest.at(layout, x, y);
         if (hit != null) {
+            if (button == 1) {
+                if (MinecraftInventory.rightClick(this.mc == null ? null : this.mc.thePlayer, runtime.tree(), hit.id)) {
+                    return;
+                }
+                runtime.rightClick(hit.id);
+                return;
+            }
             if (MinecraftInventory.click(this.mc == null ? null : this.mc.thePlayer, runtime.tree(), hit.id)) return;
-            runtime.pointer(hit.id, hit.localY, hit.height);
+            runtime.pointer(hit.id, hit.localX, hit.localY, hit.width, hit.height);
             return;
         }
         super.mouseClicked(x, y, button);
@@ -67,6 +77,17 @@ public final class ButterGuiScreen extends GuiScreen implements HostUi {
     public void click(String name) {
         if (MinecraftInventory.click(this.mc == null ? null : this.mc.thePlayer, runtime.tree(), name)) return;
         runtime.click(name);
+    }
+
+    public void type(char ch) { runtime.type(ch); }
+
+    public void backspace() { runtime.backspace(); }
+
+    public void setValue(String name, int value) { runtime.setValue(name, value); }
+
+    public void rightClick(String name) {
+        if (MinecraftInventory.rightClick(this.mc == null ? null : this.mc.thePlayer, runtime.tree(), name)) return;
+        runtime.rightClick(name);
     }
 
     void fill(int x, int y, int width, int height, int argb) {

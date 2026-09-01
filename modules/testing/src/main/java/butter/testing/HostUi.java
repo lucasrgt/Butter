@@ -12,4 +12,12 @@ public interface HostUi {
     List<HostUiNode> nodes();
 
     void click(String name);
+
+    void type(char ch);
+
+    void backspace();
+
+    void setValue(String name, int value);
+
+    void rightClick(String name);
 }

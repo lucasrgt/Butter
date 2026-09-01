@@ -2,6 +2,15 @@
 
 ## Unreleased - Minecraft HostUi adapter
 
+- Layout utilities `items-*`, `justify-*`, `grow`, `h-full`, `m-*`, and
+  `gap-x` / `gap-y` now pack. Variant tokens apply only in that state.
+- Added `Flame`, `Checkbox`, `Toggle`, `Radio`, and `GasTank`. Tanks, recipe
+  arrows, sliders, and boolean controls paint on the host. `ItemGrid(filter:)`
+  hides non-matching slots. Empty `Inventory` expands to 27 slots.
+- `HostUi` gained `type`, `backspace`, `setValue`, and `rightClick`. Mapped
+  slots merge, right-click split, and shift-move on `mainInventory`.
+- Host `Text` tokens (`text-lg`, `font-bold`, `text-muted`) size and color
+  the host framebuffer. Mapped `drawString` still uses the default font.
 - Added vanilla chrome atoms (`SearchBar`, `Tab`, `TabBar`, `Scrollbar`,
   `Separator`) and `border-vanilla` 1px bevel. SearchBar types on the host,
   tabs select and overlap an adjacent panel by 1px, scrollbar pointer sets

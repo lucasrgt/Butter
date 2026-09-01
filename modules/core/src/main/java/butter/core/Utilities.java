@@ -14,7 +14,7 @@ public final class Utilities {
             "hover", "focus", "disabled", "selected", "occupied", "tiny", "compact", "normal", "wide"));
     private static final Set<String> LITERALS = new LinkedHashSet<String>(Arrays.asList(
             "grow", "shrink", "w-full", "h-full", "text-shadow", "font-bold", "font-normal",
-            "text-lg", "text-sm", "text-xs", "text-base",
+            "text-lg", "text-sm", "text-xs", "text-base", "text-xl", "wrap", "truncate", "slot-lg",
             "items-center", "items-start", "items-end", "items-stretch",
             "justify-between", "justify-center", "justify-start", "justify-end"));
     private static final Pattern SPACED = Pattern.compile(
@@ -55,6 +55,8 @@ public final class Utilities {
         if (token.startsWith("bg-") || token.startsWith("border-")) {
             return theme.hasColor(token.substring(token.indexOf('-') + 1));
         }
+        if (token.startsWith("text-") && theme.hasColor(token.substring(5))) return true;
+        if (token.startsWith("font-") && theme.hasFont(token.substring(5))) return true;
         return token.startsWith("slot-") && theme.hasSlot(token.substring(5));
     }
 }

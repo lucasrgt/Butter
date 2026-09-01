@@ -21,6 +21,8 @@ public final class ButterFormatterTest {
                 "examples/hello/Hello.butter",
                 "examples/thaum/Research.butter",
                 "examples/vanilla/Chrome.butter",
+                "examples/vanilla/Furnace.butter",
+                "examples/vanilla/Terminal.butter",
                 "modules/reference/src/main/butter/FusionReactorPanel.butter",
                 "modules/reference/src/main/butter/FuelSection.butter",
                 "modules/reference/src/main/butter/ReactorControls.butter",

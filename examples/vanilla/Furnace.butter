@@ -1,0 +1,22 @@
+public component Furnace() {
+  Row(
+    class: "p-8 gap-8 bg-panel border-vanilla items-center",
+    children: [
+      Column(
+        class: "gap-4 items-center",
+        children: [
+          Slot(id: "input"),
+          Flame(id: "burn", value: 8, max: 16),
+          Slot(id: "fuel")
+        ]
+      ),
+      RecipeProgress(
+        id: "cook",
+        value: 3,
+        max: 8,
+        class: "w-22 h-16"
+      ),
+      Slot(id: "output", class: "slot-lg")
+    ]
+  )
+}

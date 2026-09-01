@@ -48,6 +48,12 @@ final class ChromeHost {
         return true;
     }
 
+    boolean setValue(WidgetSpec template, WidgetSpec spec, int value, Resolver resolver) {
+        if (!"Scrollbar".equals(spec.type()) || spec.id() == null) return false;
+        write(template, spec.id(), "value", Integer.valueOf(Math.max(0, value)), resolver, false);
+        return true;
+    }
+
     private boolean edit(boolean delete, char ch, WidgetSpec template, WidgetSpec resolved, Resolver resolver) {
         if (focused == null) return false;
         WidgetSpec spec = ButterRuntime.find(resolved, focused);
@@ -55,6 +61,8 @@ final class ChromeHost {
         String current = queries.containsKey(focused) ? queries.get(focused) : text(spec.prop("value"));
         String next = delete ? (current.isEmpty() ? "" : current.substring(0, current.length() - 1))
                 : current + ch;
+        int limit = number(spec.prop("maxLength"));
+        if (!delete && limit > 0 && next.length() > limit) next = next.substring(0, limit);
         write(template, focused, "value", next, resolver, true);
         return true;
     }

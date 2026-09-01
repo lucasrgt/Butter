@@ -46,6 +46,30 @@ public final class LayoutEngineTest {
                 Collections.<String, Object>singletonMap("class", "gap-0"), seamKids),
                 BoxConstraints.loose(200, 80));
         require(seam.children.get(1).bounds.x == seam.children.get(0).bounds.width - 1, "tab seam");
+        LayoutNode large = LayoutEngine.layout(new WidgetSpec("Text", null,
+                Collections.<Object>singletonList("Hello"),
+                Collections.<String, Object>singletonMap("class", "text-lg"),
+                Collections.<WidgetSpec>emptyList()), BoxConstraints.loose(200, 80));
+        require(large.bounds.width == 40 && large.bounds.height == 10, "text-lg");
+        require(StyleMetrics.parse("gap-x-2 gap-y-4").box.gapX == 2
+                && StyleMetrics.parse("gap-x-2 gap-y-4").box.gapY == 4, "axis gap");
+        require(StyleMetrics.parse("m-2").box.marginLeft == 2, "margin");
+        require(StyleMetrics.parse("h-full").box.heightFull, "h-full");
+        require(StyleMetrics.parse("hover:bg-accent").background.isEmpty(), "variant idle");
+        require("accent".equals(StyleMetrics.parse("bg-button hover:bg-accent", "hover").background), "variant hover");
+        java.util.List<WidgetSpec> rowKids = new java.util.ArrayList<WidgetSpec>();
+        rowKids.add(new WidgetSpec("Text", null, Collections.<Object>singletonList("A"),
+                Collections.<String, Object>emptyMap(), Collections.<WidgetSpec>emptyList()));
+        rowKids.add(new WidgetSpec("Button", null, Collections.<Object>singletonList("B"),
+                Collections.singletonMap("class", (Object) "h-20"), Collections.<WidgetSpec>emptyList()));
+        LayoutNode centered = LayoutEngine.layout(new WidgetSpec("Row", null, Collections.emptyList(),
+                Collections.singletonMap("class", (Object) "items-center"), rowKids),
+                BoxConstraints.loose(200, 80));
+        require(centered.children.get(0).bounds.y > 0, "items-center");
+        LayoutNode full = LayoutEngine.layout(new WidgetSpec("Panel", null, Collections.emptyList(),
+                Collections.singletonMap("class", (Object) "h-full w-20"),
+                Collections.<WidgetSpec>emptyList()), BoxConstraints.loose(80, 40));
+        require(full.bounds.height == 40, "h-full panel");
         System.out.println("  layout: column packing");
     }
 

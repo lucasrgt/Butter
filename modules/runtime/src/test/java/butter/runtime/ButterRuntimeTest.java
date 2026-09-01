@@ -39,6 +39,22 @@ public final class ButterRuntimeTest {
         bound.click("search");
         bound.type('z');
         require("z".equals(query.query.get()), "bound query");
+        ButterRuntime chromeUi = ButterRuntime.mount(chrome, null);
+        chromeUi.click("craftable");
+        require(Boolean.TRUE.equals(chromeUi.node("craftable").value), "checkbox");
+        chromeUi.pointer("zoom", 32, 0, 64, 8);
+        require(((Number) chromeUi.node("zoom").value).intValue() == 4, "slider");
+        chromeUi.setValue("scroll", 7);
+        require(((Number) chromeUi.node("scroll").value).intValue() == 7, "set_value");
+        FilterHost filterHost = new FilterHost();
+        ButterRuntime filtered = ButterRuntime.mount(ButterCompiler.compileSource("Grid.butter",
+                "ItemGrid(id: \"grid\", filter: query, children: ["
+                        + "Slot(id: \"coal\", item: 4), Slot(id: \"dirt\", item: 3)])",
+                FilterHost.class), filterHost);
+        require(filtered.tree().children().size() == 2, "unfiltered");
+        filterHost.query.set("4");
+        require(filtered.tree().children().size() == 1
+                && "coal".equals(filtered.tree().children().get(0).id()), "filter");
         System.out.println("  runtime: signals, actions, invalidation");
     }
 
@@ -58,6 +74,11 @@ public final class ButterRuntimeTest {
 
     @ButterComponent(template = "Query.butter")
     public static final class Query {
+        public final Signal<String> query = Signal.of("");
+    }
+
+    @ButterComponent(template = "Grid.butter")
+    public static final class FilterHost {
         public final Signal<String> query = Signal.of("");
     }
 }

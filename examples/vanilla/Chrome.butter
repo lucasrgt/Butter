@@ -13,7 +13,20 @@ public component Chrome() {
         class: "p-8 gap-4 bg-panel border-vanilla",
         children: [
           SearchBar(id: "search", placeholder: "Search..."),
-          Separator(class: "w-88")
+          Separator(class: "w-88"),
+          Row(
+            class: "gap-4 items-center",
+            children: [
+              Checkbox(id: "craftable", value: false),
+              Toggle(id: "nei", value: true),
+              Slider(
+                id: "zoom",
+                value: 2,
+                max: 8,
+                class: "w-64"
+              )
+            ]
+          )
         ]
       ),
       Scrollbar(

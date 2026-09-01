@@ -13,6 +13,12 @@ highlight = "#FFFFFF"
 shadow = "#555555"
 border = "#000000"
 muted = "#A0A0A0"
+search = "#2A2A2A"
+search-light = "#4A4A4A"
 
 [slots]
 vanilla = "gui/slot.png"
+
+[fonts]
+title = "text-lg"
+body = "text-base"

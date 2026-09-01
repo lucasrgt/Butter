@@ -36,6 +36,13 @@ public final class SemanticTreeTest {
                 && chrome.byId("sort-name").actions.contains("click"), "tab");
         require("scrollbar".equals(chrome.byId("scroll").role)
                 && chrome.byId("scroll").actions.contains("set_value"), "scrollbar");
+        SemanticTree controls = SemanticTree.of(ButterCompiler.compileSource("Controls.butter",
+                "Column(children: [Checkbox(id: \"on\", value: true), Flame(id: \"burn\", value: 1, max: 2)])",
+                null));
+        require("checkbox".equals(controls.byId("on").role) && controls.byId("on").actions.contains("click"),
+                "checkbox");
+        require("flame".equals(controls.byId("burn").role) && controls.byId("burn").actions.contains("set_value"),
+                "flame");
         System.out.println("  semantics: inferred and declared roles");
     }
 

@@ -14,6 +14,7 @@ public final class ThemeFileTest {
         require(vanilla.color("accent") == Theme.standard().color("accent"), "accent");
         require(vanilla.color("highlight") == Theme.standard().color("highlight"), "highlight");
         require(vanilla.hasColor("shadow") && vanilla.hasColor("muted"), "bevel colors");
+        require(vanilla.hasColor("search") && vanilla.hasFont("title"), "search font");
         Theme thaum = Theme.standard().extend(ThemeFile.load(Paths.get("themes/thaum.toml")));
         require("thaumcraft".equals(thaum.id()) && thaum.hasColor("vis"), "thaum vis");
         require(thaum.color("vis") == 0xFF2E8B57, "vis hex");

@@ -1,5 +1,7 @@
 package butter.render;
 
+import butter.layout.StyleMetrics;
+
 /** Deterministic ARGB framebuffer used by tests and as the host oracle. */
 public final class BufferCanvas implements HostCanvas {
     private final int width;
@@ -27,8 +29,14 @@ public final class BufferCanvas implements HostCanvas {
     }
 
     public void text(int x, int y, String value, int argb) {
+        text(x, y, value, argb, StyleMetrics.CHAR_W, StyleMetrics.CHAR_H);
+    }
+
+    public void text(int x, int y, String value, int argb, int charWidth, int charHeight) {
         if (value == null) return;
-        fill(x, y, Math.max(1, value.length() * 6), 8, argb);
+        int glyphW = Math.max(1, charWidth);
+        int glyphH = Math.max(1, charHeight);
+        fill(x, y, Math.max(1, value.length() * glyphW), glyphH, argb);
     }
 
     public int sample(int x, int y) {

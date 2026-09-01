@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="icon.png" alt="Butter" width="128">
+</p>
+
 <h1 align="center">Butter</h1>
 
 <p align="center"><strong>Flutter and Tailwind inspired UI for Minecraft Beta 1.7.3.</strong></p>
@@ -189,7 +193,7 @@ semantic tree; it does not own Butter widget metadata.
 | Signals | `Signal`, `Computed`, `Effect`; rebuild on invalidation; no public `watch()` |
 | Semantic roles | Worldline-aligned `slot`, `tank`, `energy`, `progress`; Butter-only roles stay local |
 | `HostUi` | Flattened `[screen/{id}, …widgets with ids]` for tests and Worldline |
-| Live slots | `Slot(index)` overlays `mainInventory`; left-click swaps with the cursor |
+| Live slots | `Slot(index)` overlays `mainInventory`; merge, right-click split, shift-move |
 | Template reload | `.butter` reload without DCEVM; Java still uses `javac` |
 | Reference screen | Fusion reactor fixture under `modules/reference` |
 
@@ -197,10 +201,10 @@ semantic tree; it does not own Butter widget metadata.
 
 | Capability | What it provides |
 | --- | --- |
-| Vanilla catalog | Built-in `panel`, `accent`, `tooltip`, `button`, `text`, `energy`, `slot`, `highlight`, `shadow`, `border`, `muted` |
+| Vanilla catalog | Built-in `panel`, `accent`, `tooltip`, `button`, `text`, `energy`, `slot`, `highlight`, `shadow`, `border`, `muted`, `search`, `search-light` |
 | TOML overlay | `id`, `[colors]`, `[slots]`, `[fonts]`; `#RRGGBB` / `#AARRGGBB` |
-| Token unlock | A color named `vis` makes `bg-vis` and `border-vis` legal |
-| Host lookup | `HostRenderer` paints `bg-*` from the active theme |
+| Token unlock | A color named `vis` makes `bg-vis`, `border-vis`, and `text-vis` legal |
+| Host lookup | `HostRenderer` paints `bg-*` fills and `text-*` ink/size on the host |
 
 ---
 
@@ -333,6 +337,8 @@ Useful direct links:
 
 - [Hello template](examples/hello/Hello.butter)
 - [Vanilla chrome example](examples/vanilla/Chrome.butter)
+- [Furnace chrome example](examples/vanilla/Furnace.butter)
+- [ME terminal example](examples/vanilla/Terminal.butter)
 - [Thaumcraft-style theme example](examples/thaum/)
 - [Vanilla theme catalog](themes/vanilla.toml)
 - [Fusion reactor backing class](modules/reference/src/main/java/butter/reference/FusionReactorPanel.java)
@@ -355,7 +361,9 @@ replacement for vanilla container logic. v0.1.0 does not claim:
 
 - Official-JAR framebuffer match (blocked on Worldline M10).
 - GL item sprites; mapped screens paint `drawRect` / `drawString` counts.
-- Vanilla merge or shift-click; slot click is cursor swap.
+- Host `text-lg` / `font-bold` / `text-muted` on the mapped default font.
+- Vanilla `Container` packets; mapped slots merge / split / shift-move on
+  `mainInventory` only.
 - A public `watch()` API.
 - DCEVM Java reload.
 

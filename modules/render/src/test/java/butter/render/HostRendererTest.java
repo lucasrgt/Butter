@@ -54,6 +54,46 @@ public final class HostRendererTest {
         new HostRenderer().paint(panel, bevel);
         require(bevel.sample(0, 0) == butter.core.Theme.standard().color("highlight"), "raised highlight");
         require(bevel.sample(19, 19) == butter.core.Theme.standard().color("shadow"), "raised shadow");
+        LayoutNode muted = LayoutEngine.layout(ButterCompiler.compileSource("Ink.butter",
+                "Text(\"A\", class: \"text-muted\")", null), BoxConstraints.loose(40, 20));
+        BufferCanvas ink = new BufferCanvas(40, 20);
+        new HostRenderer().paint(muted, ink);
+        require(ink.sample(2, 2) == butter.core.Theme.standard().color("muted"), "text-muted");
+        LayoutNode large = LayoutEngine.layout(ButterCompiler.compileSource("Lg.butter",
+                "Text(\"A\", class: \"text-lg\")", null), BoxConstraints.loose(40, 20));
+        BufferCanvas tall = new BufferCanvas(40, 20);
+        new HostRenderer().paint(large, tall);
+        require(tall.sample(2, 11) == HostRenderer.TEXT, "text-lg glyph");
+        LayoutNode bold = LayoutEngine.layout(ButterCompiler.compileSource("Bold.butter",
+                "Text(\"A\", class: \"font-bold\")", null), BoxConstraints.loose(40, 20));
+        BufferCanvas heavy = new BufferCanvas(40, 20);
+        new HostRenderer().paint(bold, heavy);
+        require(heavy.sample(8, 2) == HostRenderer.TEXT, "font-bold");
+        LayoutNode tank = LayoutEngine.layout(ButterCompiler.compileSource("Tank.butter",
+                "FluidTank(id: \"tank\", value: 8, max: 8, class: \"w-18 h-18\")", null),
+                BoxConstraints.loose(20, 20));
+        BufferCanvas fluid = new BufferCanvas(20, 20);
+        new HostRenderer().paint(tank, fluid);
+        require(fluid.sample(4, 16) == butter.core.Theme.standard().color("accent"), "tank fill");
+        LayoutNode flame = LayoutEngine.layout(ButterCompiler.compileSource("Burn.butter",
+                "Flame(id: \"burn\", value: 8, max: 8)", null), BoxConstraints.loose(20, 20));
+        BufferCanvas fire = new BufferCanvas(20, 20);
+        new HostRenderer().paint(flame, fire);
+        require(fire.sample(7, 12) == HostRenderer.ENERGY, "flame");
+        LayoutNode idle = LayoutEngine.layout(ButterCompiler.compileSource("Hover.butter",
+                "Button(\"Go\", id: \"go\", class: \"w-20 h-20 bg-button hover:bg-accent\")", null),
+                BoxConstraints.loose(24, 24));
+        BufferCanvas rest = new BufferCanvas(24, 24);
+        new HostRenderer().paint(idle, rest);
+        require(rest.sample(4, 4) == HostRenderer.BUTTON, "hover idle");
+        butter.runtime.ButterRuntime hovered = butter.runtime.ButterRuntime.mount(
+                ButterCompiler.compileSource("Hover.butter",
+                        "Button(\"Go\", id: \"go\", class: \"w-20 h-20 bg-button hover:bg-accent\")", null),
+                null);
+        hovered.hover("go");
+        BufferCanvas hot = new BufferCanvas(24, 24);
+        new HostRenderer().paint(hovered.layout(), hot);
+        require(hot.sample(4, 4) == HostRenderer.ACCENT, "hover paint");
         System.out.println("  render: host framebuffer");
     }
 

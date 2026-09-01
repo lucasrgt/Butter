@@ -17,8 +17,8 @@ the Beta Energistics terminal base.
 | `slot` / `big_slot` | `Slot` (`class: "w-26 h-26"` for big) | atom |
 | `energy_bar` | `EnergyBar` | atom |
 | `progress_arrow` | `RecipeProgress` | atom |
-| `flame` | not yet | later |
-| `fluid_tank` / `gas_tank` | `FluidTank` | atom |
+| `flame` | `Flame` | atom |
+| `fluid_tank` / `gas_tank` | `FluidTank` / `GasTank` | atom |
 | `separator` | `Separator` | atom |
 | `search_box` / `search_box_light` | `SearchBar` (light is theme) | atom |
 | `scrollbar` / `scrollbar_tab` / `_left` | `Scrollbar` (place with `Row`/`Column`) | atom |
@@ -29,9 +29,16 @@ the Beta Energistics terminal base.
 
 ## New atoms
 
+`Flame` — 14×14 burn mark from `value` / `max`. Role `flame`. Host fill, not
+the vanilla furnace PNG.
+
+`Checkbox` / `Toggle` / `Radio` — click toggles. `Radio` is exclusive inside
+`group`. Bind `value` to a `Signal<Boolean>` when Java owns the state.
+
 `SearchBar` — 88×12, inset bevel, `placeholder`, `value`, `focused`. Role
-`search`. Click focuses; `type` / `backspace` edit `value`. Filtering stays
-in Java (bind `value` to a `Signal<String>`).
+`search`. Click focuses; `type` / `backspace` edit `value`. Optional
+`maxLength`. Filtering: bind `ItemGrid(filter: query)` to the same
+`Signal<String>`.
 
 `Tab` — label argument, optional `selected`. Role `tab`. Click selects
 exclusively inside its `TabBar`.
@@ -52,4 +59,10 @@ SearchBar is host text, not vanilla `GuiTextField` pixels. Tabs merge as
 1px host bevel, not Retronism PNG. Scrollbar is track plus thumb, not Aero
 9-slice.
 
-See `examples/vanilla/Chrome.butter`.
+`slot-lg` — 26×26 slot. `bg-search-light` is the light search fill.
+
+`ItemGrid(filter:)` hides slots whose `item` does not contain the query.
+Empty `Inventory` expands to 27 slots. `UpgradeSlots(base: n)` / `ItemGrid(base: n)`
+index overlays from `n`.
+
+See `examples/vanilla/Chrome.butter`, `Furnace.butter`, and `Terminal.butter`.

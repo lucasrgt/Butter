@@ -43,6 +43,12 @@ public final class Theme {
         return value;
     }
 
+    public String font(String name) {
+        String value = fonts.get(name);
+        if (value == null) throw new IllegalStateException("unknown theme font " + name);
+        return value;
+    }
+
     public Theme extend(Theme overlay) {
         if (overlay == null) return this;
         Map<String, Integer> nextColors = new LinkedHashMap<String, Integer>(colors);
@@ -68,9 +74,14 @@ public final class Theme {
         colors.put("shadow", Integer.valueOf(0xFF555555));
         colors.put("border", Integer.valueOf(0xFF000000));
         colors.put("muted", Integer.valueOf(0xFFA0A0A0));
+        colors.put("search", Integer.valueOf(0xFF2A2A2A));
+        colors.put("search-light", Integer.valueOf(0xFF4A4A4A));
         Map<String, String> slots = new LinkedHashMap<String, String>();
         slots.put("vanilla", "gui/slot.png");
-        return new Theme("vanilla", colors, slots, Collections.<String, String>emptyMap());
+        Map<String, String> fonts = new LinkedHashMap<String, String>();
+        fonts.put("title", "text-lg");
+        fonts.put("body", "text-base");
+        return new Theme("vanilla", colors, slots, fonts);
     }
 
     private static Map<String, Integer> copyInts(Map<String, Integer> source) {

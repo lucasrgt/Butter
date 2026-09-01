@@ -6,5 +6,8 @@ public interface HostCanvas {
     int height();
     void fill(int x, int y, int width, int height, int argb);
     void text(int x, int y, String value, int argb);
+    default void text(int x, int y, String value, int argb, int charWidth, int charHeight) {
+        text(x, y, value, argb);
+    }
     int[] pixels();
 }

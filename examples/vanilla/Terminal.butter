@@ -1,0 +1,12 @@
+public component Terminal() {
+  Column(
+    class: "p-8 gap-4 bg-panel border-vanilla",
+    children: [
+      Text("ME Terminal", class: "font-title font-bold"),
+      SearchBar(id: "search", placeholder: "Search...", class: "bg-search-light"),
+      ItemGrid(id: "grid", slots: 27, class: "grid-cols-9 gap-1"),
+      Separator(class: "w-176"),
+      PlayerInventory()
+    ]
+  )
+}

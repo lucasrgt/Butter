@@ -30,9 +30,13 @@ public final class ButterUi implements HostUi {
 
     public void click(String name) { runtime.click(name); }
 
-    public boolean type(char ch) { return runtime.type(ch); }
+    public void type(char ch) { runtime.type(ch); }
 
-    public boolean backspace() { return runtime.backspace(); }
+    public void backspace() { runtime.backspace(); }
+
+    public void setValue(String name, int value) { runtime.setValue(name, value); }
+
+    public void rightClick(String name) { runtime.rightClick(name); }
 
     public static final class Handle {
         private final ButterRuntime runtime;

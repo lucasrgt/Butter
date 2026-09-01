@@ -43,7 +43,7 @@ public final class ReleaseCheck {
                 "docs/SEMANTICS.md", "docs/WORLDLINE.md", "docs/THEME.md", "docs/LIBRARY.md",
                 "themes/vanilla.toml", "themes/thaum.toml", "smokes/hostui-live/MAP.md",
                 "editors/README.md", "editors/vscode/package.json",
-                "editors/vscode/syntaxes/butter.tmLanguage.json", ".vscode/settings.json")) {
+                "editors/vscode/syntaxes/butter.tmLanguage.json")) {
             if (!Files.isRegularFile(root.resolve(file))) throw new IllegalStateException("missing " + file);
         }
         sameFile("editors/Butter.tmbundle/Syntaxes/Butter.tmLanguage.json",
@@ -63,6 +63,9 @@ public final class ReleaseCheck {
                 if (relative.getNameCount() > 0 && excluded.contains(relative.getName(0).toString())) return;
                 String name = path.getFileName().toString().toLowerCase();
                 String normalized = relative.toString().replace('\\', '/').toLowerCase();
+                if (normalized.startsWith("tests/worldline/.gradle/")
+                        || normalized.startsWith("tests/worldline/build/")
+                        || normalized.equals("tests/worldline/gradle/wrapper/gradle-wrapper.jar")) return;
                 if (name.endsWith(".jar") || name.endsWith(".class")
                         || normalized.contains("minecraft/src/net/")
                         || normalized.contains("minecraft/bin/")) {

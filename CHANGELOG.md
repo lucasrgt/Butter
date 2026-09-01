@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- Migrated the external suite to the isolated Worldline TestKit 0.2.0 Gradle
+- Migrated the external suite to the isolated Worldline TestKit 0.3.1 Gradle
   project under `tests/worldline`; specs remain Java 8 and use Butter's own
   compiled module classes.
 

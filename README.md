@@ -81,7 +81,7 @@ replace an official-JAR pixel oracle.
 ### Worldline TestKit consumer
 
 Butter carries external Java 8 specs under `tests/worldline/`. The isolated
-Gradle project uses `dev.worldline.test` 0.2.0 rather than Worldline repository
+Gradle project uses `io.github.lucasrgt.worldline.test` 0.3.1 rather than Worldline repository
 sources and exercises formatting, compilation, runtime mounting, and semantic
 lookup in host-only mode. Run:
 

@@ -15,7 +15,8 @@ public final class WidgetCatalog {
                 "Row", "Column", "Grid", "Stack", "Panel", "Text", "Button", "Slider", "ProgressBar",
                 "EnergyBar", "FluidTank", "Slot", "Inventory", "PlayerInventory", "Tooltip", "Spacer",
                 "ItemGrid", "MachinePanel", "RecipeProgress", "UpgradeSlots",
-                "SearchBar", "Tab", "TabBar", "Scrollbar", "Separator"));
+                "SearchBar", "Tab", "TabBar", "Scrollbar", "Separator",
+                "Flame", "Checkbox", "Toggle", "Radio", "GasTank"));
     }
 
     public boolean known(String name) { return names.contains(name) || WidgetNames.builtin(name); }

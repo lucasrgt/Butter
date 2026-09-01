@@ -33,6 +33,15 @@ public final class WidgetSpecTest {
         require("scrollbar".equals(WidgetNames.role("Scrollbar"))
                 && "separator".equals(WidgetNames.role("Separator")), "chrome");
         require(Utilities.unknownTokens("border-vanilla").isEmpty(), "bevel utility");
+        require(Utilities.unknownTokens("text-muted font-bold").isEmpty(), "ink");
+        require(Utilities.unknownTokens("font-title wrap slot-lg items-center grow").isEmpty(), "flex");
+        require(!Utilities.unknownTokens("text-nope").isEmpty(), "bad ink");
+        require(WidgetNames.builtin("Flame") && "flame".equals(WidgetNames.role("Flame")), "flame");
+        require("checkbox".equals(WidgetNames.role("Checkbox")) && "tank".equals(WidgetNames.role("GasTank")),
+                "controls");
+        WidgetSpec chest = WidgetExpander.expand(new WidgetSpec("Inventory", null, Collections.emptyList(),
+                Collections.<String, Object>emptyMap(), Collections.<WidgetSpec>emptyList()));
+        require(chest.children().size() == 27 && "inv-0".equals(chest.children().get(0).id()), "inventory");
         java.util.Map<String, Integer> extra = new java.util.LinkedHashMap<String, Integer>();
         extra.put("vis", Integer.valueOf(0xFF2E8B57));
         Theme thaum = Theme.standard().extend(new Theme("thaumcraft", extra,

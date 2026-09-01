@@ -41,6 +41,10 @@ public final class WidgetSpec {
         return value instanceof String ? (String) value : "";
     }
 
+    public WidgetSpec withType(String next) {
+        return new WidgetSpec(next, key, arguments, props, children);
+    }
+
     public WidgetSpec withChildren(List<WidgetSpec> next) {
         return new WidgetSpec(type, key, arguments, props, next);
     }

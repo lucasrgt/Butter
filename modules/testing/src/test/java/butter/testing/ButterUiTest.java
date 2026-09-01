@@ -36,6 +36,16 @@ public final class ButterUiTest {
         HostUiNode slot = ButterUi.of(ButterRuntime.mount(ButterCompiler.compileSource("Slot.butter",
                 "Slot(id: \"input\", item: 4, count: 8)", null), null)).nodes().get(1);
         require(HostUiNode.SLOT.equals(slot.role()) && slot.itemId() == 4 && slot.count() == 8, "slot stack");
+        ButterUi search = ButterUi.of(ButterRuntime.mount(ButterCompiler.compileSource("Search.butter",
+                "SearchBar(id: \"search\", placeholder: \"Search...\")", null), null));
+        search.click("search");
+        search.type('q');
+        require("q".equals(search.getById("search").value()), "hostui type");
+        require(search.getById("search").enabled() && search.nodes().get(1).focused(), "focused export");
+        ButterUi bar = ButterUi.of(ButterRuntime.mount(ButterCompiler.compileSource("Slide.butter",
+                "Slider(id: \"zoom\", value: 0, max: 8)", null), null));
+        bar.setValue("zoom", 3);
+        require(bar.getById("zoom").number() == 3, "hostui setValue");
         System.out.println("  testing: getById click/assert");
     }
 

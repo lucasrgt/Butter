@@ -11,7 +11,8 @@ public final class WidgetNames {
             "Row", "Column", "Grid", "Stack", "Panel", "Text", "Button", "Slider", "ProgressBar",
             "EnergyBar", "FluidTank", "Slot", "Inventory", "PlayerInventory", "Tooltip", "Spacer",
             "ItemGrid", "MachinePanel", "RecipeProgress", "UpgradeSlots", "ReactorGraph",
-            "FusionInjector", "SearchBar", "Tab", "TabBar", "Scrollbar", "Separator")));
+            "FusionInjector", "SearchBar", "Tab", "TabBar", "Scrollbar", "Separator",
+            "Flame", "Checkbox", "Toggle", "Radio", "GasTank")));
 
     private WidgetNames() {}
 
@@ -23,7 +24,11 @@ public final class WidgetNames {
         if ("Slider".equals(name)) return "slider";
         if ("ProgressBar".equals(name) || "RecipeProgress".equals(name)) return "progress";
         if ("EnergyBar".equals(name)) return "energy";
-        if ("FluidTank".equals(name)) return "tank";
+        if ("FluidTank".equals(name) || "GasTank".equals(name)) return "tank";
+        if ("Flame".equals(name)) return "flame";
+        if ("Checkbox".equals(name)) return "checkbox";
+        if ("Toggle".equals(name)) return "toggle";
+        if ("Radio".equals(name)) return "radio";
         if ("Slot".equals(name) || "UpgradeSlots".equals(name)) return "slot";
         if ("Inventory".equals(name) || "PlayerInventory".equals(name) || "ItemGrid".equals(name)) return "inventory";
         if ("MachinePanel".equals(name)) return "machine";

@@ -46,6 +46,7 @@ public final class HostRenderer {
             return;
         }
         fill(canvas, node, x, y, box);
+        HostMarks.paint(canvas, node, theme, x, y, box);
         VanillaChrome.decorate(canvas, node, theme, x, y, box);
         List<LayoutNode> children = node.children;
         for (int index = 0; index < children.size(); index++) paint(children.get(index), canvas, x, y);
@@ -53,14 +54,17 @@ public final class HostRenderer {
 
     private void fill(HostCanvas canvas, LayoutNode node, int x, int y, Rect box) {
         String type = node.widget.type();
-        String bg = butter.layout.StyleMetrics.parse(node.widget.className()).background;
+        String flags = flags(node);
+        String bg = butter.layout.StyleMetrics.parse(node.widget.className(), flags, theme).background;
         int color = fillColor(node, bg);
+        if (Boolean.FALSE.equals(node.widget.prop("enabled")) && (bg == null || bg.isEmpty())) {
+            color = theme.color("muted");
+        }
         if (color != 0) canvas.fill(x, y, box.width, box.height, color);
         if ("EnergyBar".equals(type) || "ProgressBar".equals(type)) {
             canvas.fill(x, y, Math.max(1, barWidth(node, box.width)), box.height, theme.color("energy"));
         } else if ("Text".equals(type) || "Tooltip".equals(type)) {
-            Object label = node.widget.arguments().isEmpty() ? "" : node.widget.arguments().get(0);
-            canvas.text(x + 2, y + 2, String.valueOf(label), theme.color("text"));
+            HostText.paint(canvas, node, theme, x, y);
         } else if ("Slot".equals(type)) slotGlyph(canvas, node, x, y);
     }
 
@@ -73,10 +77,29 @@ public final class HostRenderer {
         if ("Button".equals(type)) return theme.color("button");
         if ("Panel".equals(type) || "Column".equals(type)) return theme.color("panel");
         if ("EnergyBar".equals(type) || "ProgressBar".equals(type)) return theme.color("panel");
-        if ("Slot".equals(type) || "FluidTank".equals(type) || "SearchBar".equals(type)
-                || "Scrollbar".equals(type)) return theme.color("slot");
+        if ("SearchBar".equals(type)) {
+            return theme.hasColor("search") ? theme.color("search") : theme.color("slot");
+        }
+        if ("Slot".equals(type) || "FluidTank".equals(type) || "Scrollbar".equals(type)
+                || "Slider".equals(type) || "Flame".equals(type) || "Checkbox".equals(type)
+                || "Toggle".equals(type) || "Radio".equals(type)) return theme.color("slot");
+        if ("MachinePanel".equals(type) || "RecipeProgress".equals(type)) return theme.color("panel");
         if ("Separator".equals(type)) return theme.color("shadow");
         return 0;
+    }
+
+    static String flags(LayoutNode node) {
+        StringBuilder flags = new StringBuilder();
+        if (Boolean.TRUE.equals(node.widget.prop("hover"))) flags.append("hover ");
+        if (Boolean.TRUE.equals(node.widget.prop("focused"))) flags.append("focus ");
+        if (Boolean.FALSE.equals(node.widget.prop("enabled"))) flags.append("disabled ");
+        if (Boolean.TRUE.equals(node.widget.prop("selected"))) flags.append("selected ");
+        Object item = node.widget.prop("item");
+        Object count = node.widget.prop("count");
+        if (item instanceof Number || (count instanceof Number && ((Number) count).intValue() > 0)) {
+            flags.append("occupied ");
+        }
+        return flags.toString();
     }
 
     private static int barWidth(LayoutNode node, int width) {

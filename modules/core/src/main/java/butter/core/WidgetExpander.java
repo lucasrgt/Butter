@@ -12,6 +12,7 @@ public final class WidgetExpander {
 
     public static WidgetSpec expand(WidgetSpec spec) {
         if (spec == null) return spec;
+        if ("GasTank".equals(spec.type())) spec = spec.withType("FluidTank");
         List<WidgetSpec> children = spec.children();
         if (children.isEmpty()) {
             WidgetSpec leaf = expandLeaf(spec);
@@ -28,22 +29,27 @@ public final class WidgetExpander {
     }
 
     private static WidgetSpec expandLeaf(WidgetSpec spec) {
-        if ("PlayerInventory".equals(spec.type())) return spec.withChildren(slots("player", 36, true));
-        if ("UpgradeSlots".equals(spec.type())) return spec.withChildren(slots("upgrade", 4, false));
+        if ("PlayerInventory".equals(spec.type())) return spec.withChildren(slots("player", 36, 0));
+        if ("Inventory".equals(spec.type())) return spec.withChildren(slots("inv", 27, -1));
+        if ("UpgradeSlots".equals(spec.type())) {
+            int base = spec.prop("base") instanceof Number ? ((Number) spec.prop("base")).intValue() : -1;
+            return spec.withChildren(slots("upgrade", 4, base));
+        }
         if ("ItemGrid".equals(spec.type())) {
             int count = spec.prop("slots") instanceof Number ? ((Number) spec.prop("slots")).intValue() : 9;
             if (count < 0) count = 0;
-            return spec.withChildren(slots("grid", count, false));
+            int base = spec.prop("base") instanceof Number ? ((Number) spec.prop("base")).intValue() : -1;
+            return spec.withChildren(slots("grid", count, base));
         }
         return spec;
     }
 
-    private static List<WidgetSpec> slots(String prefix, int count, boolean indexed) {
+    private static List<WidgetSpec> slots(String prefix, int count, int base) {
         List<WidgetSpec> slots = new ArrayList<WidgetSpec>(count);
         for (int index = 0; index < count; index++) {
             Map<String, Object> props = new LinkedHashMap<String, Object>();
             props.put("id", prefix + "-" + index);
-            if (indexed) props.put("index", Integer.valueOf(index));
+            if (base >= 0) props.put("index", Integer.valueOf(base + index));
             slots.add(new WidgetSpec("Slot", null, Collections.emptyList(), props,
                     Collections.<WidgetSpec>emptyList()));
         }

@@ -24,9 +24,18 @@ final class MinecraftInventory {
     }
 
     static boolean click(EntityPlayer player, WidgetSpec tree, String id) {
+        return use(player, tree, id, false);
+    }
+
+    static boolean rightClick(EntityPlayer player, WidgetSpec tree, String id) {
+        return use(player, tree, id, true);
+    }
+
+    private static boolean use(EntityPlayer player, WidgetSpec tree, String id, boolean right) {
         Integer slot = inventoryIndex(tree, id);
         if (player == null || player.inventory == null || slot == null) return false;
-        swap(player, slot.intValue());
+        if (right) MinecraftStacks.right(player, slot.intValue());
+        else MinecraftStacks.left(player, slot.intValue());
         return true;
     }
 
@@ -50,17 +59,6 @@ final class MinecraftInventory {
         for (int index = 0; index < children.size(); index++) walk(screen, player, children.get(index), x, y);
     }
 
-    private static void swap(EntityPlayer player, int index) {
-        ItemStack[] main = player.inventory.mainInventory;
-        if (index < 0 || main == null || index >= main.length) {
-            throw new IllegalArgumentException("player slot index out of range: " + index);
-        }
-        ItemStack held = player.inventory.getItemStack();
-        player.inventory.setItemStack(main[index]);
-        main[index] = held;
-        player.inventory.onInventoryChanged();
-    }
-
     private static HostUiNode stack(HostUiNode node, ItemStack[] main, int index) {
         if (index < 0 || main == null || index >= main.length) {
             throw new IllegalArgumentException("player slot index out of range: " + index);
@@ -68,7 +66,8 @@ final class MinecraftInventory {
         ItemStack stack = main[index];
         int itemId = stack == null ? -1 : stack.itemID;
         int count = stack == null ? 0 : stack.stackSize;
-        return new HostUiNode(node.role(), node.name(), node.index(), itemId, count);
+        return new HostUiNode(node.role(), node.name(), node.index(), itemId, count,
+                node.label(), node.enabled(), node.focused());
     }
 
     private static Integer inventoryIndex(WidgetSpec spec, String id) {

@@ -4,6 +4,8 @@
 with `drawRect` / `drawString`, and implements `butter.testing.HostUi`.
 
 `ButterGuiScreen` overlays `Slot(index)` from `thePlayer.inventory.mainInventory`.
+Left-click merges or swaps, right-click splits or places one, and shift-click
+moves between hotbar and the backpack.
 Worldline binds `HostUi` by reflection. This adapter may import Minecraft
 types. Product modules must not.
 

@@ -34,7 +34,11 @@ final class VanillaChrome {
             thumb(canvas, node, theme, x, y, box);
             return;
         }
-        String border = StyleMetrics.parse(node.widget.className()).border;
+        if ("MachinePanel".equals(type)) {
+            bevel(canvas, x, y, box.width, box.height, theme, false, null);
+            return;
+        }
+        String border = StyleMetrics.parse(node.widget.className(), HostRenderer.flags(node)).border;
         if (border != null && !border.isEmpty()) bevel(canvas, x, y, box.width, box.height, theme, true, null);
     }
 

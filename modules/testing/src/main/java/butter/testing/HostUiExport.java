@@ -22,7 +22,8 @@ public final class HostUiExport {
         if (node.id != null && !node.id.isEmpty()) {
             String role = node.role == null ? "generic" : node.role;
             int index = HostUiNode.SLOT.equals(role) ? slots[0]++ : -1;
-            nodes.add(new HostUiNode(role, node.id, index, node.itemId, count(node)));
+            nodes.add(new HostUiNode(role, node.id, index, node.itemId, count(node),
+                    node.label == null ? "" : node.label, node.enabled, node.focused));
         }
         for (int index = 0; index < node.children.size(); index++) walk(node.children.get(index), nodes, slots);
     }

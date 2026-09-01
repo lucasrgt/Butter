@@ -2,6 +2,10 @@
 
 ## Unreleased - Minecraft HostUi adapter
 
+- Adopted the visual GUI builder from Worldline under
+  `editors/gui-builder`; it now exports native `.butter` components while
+  retaining neutral `GameUiSpec` JSON for Worldline verification.
+
 - Added vanilla chrome atoms (`SearchBar`, `Tab`, `TabBar`, `Scrollbar`,
   `Separator`) and `border-vanilla` 1px bevel. SearchBar types on the host,
   tabs select and overlap an adjacent panel by 1px, scrollbar pointer sets

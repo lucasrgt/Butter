@@ -202,6 +202,21 @@ semantic tree; it does not own Butter widget metadata.
 | Token unlock | A color named `vis` makes `bg-vis` and `border-vis` legal |
 | Host lookup | `HostRenderer` paints `bg-*` from the active theme |
 
+### Visual GUI builder
+
+[`editors/gui-builder`](editors/gui-builder) is Butter's visual authoring
+surface. It builds and previews the same widget tree used by `.butter`
+templates, exports a native Butter component, and can emit neutral
+`GameUiSpec` JSON for Worldline verification.
+
+```text
+cd editors/gui-builder
+npm install
+npm test
+npm run build
+npm run dev
+```
+
 ---
 
 ## Template example
@@ -325,6 +340,7 @@ The behavioral and engineering constitution is in [`AGENTS.md`](AGENTS.md).
 | [Worldline](docs/WORLDLINE.md) | Reflection bind, lab `open`/`putMain`, non-claims |
 | [Roadmap](docs/ROADMAP.md) | GO stages and v0.1.0 non-claims |
 | [Editor support](editors/README.md) | Cursor/VS Code extension and IntelliJ TextMate bundle |
+| [Visual GUI builder](editors/gui-builder/README.md) | Drag-and-compose Butter screen authoring and preview |
 | [Live HostUi map](smokes/hostui-live/MAP.md) | Mapped two-process smoke boundary |
 | [Changelog](CHANGELOG.md) | Unreleased adapter work and 0.1.0 host runtime |
 | [Engineering guide](AGENTS.md) | Constitution and canonical verify commands |

@@ -1,5 +1,10 @@
 # Editor support
 
+The visual GUI builder lives in [`editors/gui-builder`](gui-builder). It
+authors native `.butter` components and previews the Beta 1.7.3 panel. The
+language integrations below provide syntax highlighting and formatting for
+the exported templates.
+
 Highlighting uses one TextMate grammar. Format uses the Java compiler.
 Cursor and VS Code share `editors/vscode`. IntelliJ uses the TextMate bundle.
 

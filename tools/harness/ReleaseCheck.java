@@ -48,6 +48,9 @@ public final class ReleaseCheck {
         }
         sameFile("editors/Butter.tmbundle/Syntaxes/Butter.tmLanguage.json",
                 "editors/vscode/syntaxes/butter.tmLanguage.json");
+        requireText("editors/gui-builder/package.json", "\"name\": \"butter-gui-builder\"");
+        requireText("editors/gui-builder/package-lock.json", "\"name\": \"butter-gui-builder\"");
+        requireText("editors/gui-builder/src/App.tsx", "Butter GUI Builder");
         verifyPublicTree();
         System.out.println("  release: Butter v" + version + " host runtime GO");
     }

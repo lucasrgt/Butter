@@ -1,6 +1,7 @@
 import { memory } from './editor-memory.ts'
 import { refresh } from './host.ts'
-import { CATEGORIES, componentPage } from './component-catalog.ts'
+import { componentCategories, componentPage, allComponents } from './component-catalog.ts'
+import { library } from './library/registry.ts'
 
 export interface ViewState {
   layout: 'gui' | 'split'
@@ -16,6 +17,7 @@ export interface ViewState {
   component_search: string
   component_category: string
   component_page: number
+  component_pack: string
   selection_mode: 'group' | 'component'
   align_target: 'auto' | 'selection' | 'canvas' | 'parent'
   smart_guides: boolean
@@ -25,12 +27,14 @@ export interface ViewState {
 }
 const defaults: ViewState = { layout: 'gui', zoom: 'fit', source: false, grid: false,
   grid_size: 8, grid_opacity: .22, snap: false, split_ratio: 50, pan_x: 0, pan_y: 0,
-  component_search: '', component_category: 'all', component_page: 1,
+  component_search: '', component_category: 'all', component_page: 1, component_pack:'all',
   selection_mode: 'group', align_target: 'auto', smart_guides: true, collapsed_ids: [], layer_search: '', semantics_bindings_open: false }
 
 export function viewState(): ViewState {
   if (!Project) return structuredClone(defaults)
   const state = { ...structuredClone(defaults), ...memory(Project).view }
+  if(!['all','builtin'].includes(state.component_pack)&&!library().list().some(e=>e.enabled&&`${e.pack.id}@${e.pack.version}`===state.component_pack))state.component_pack='all'
+  if(state.component_category!=='all'&&!componentCategories().some(c=>c.id===state.component_category))state.component_category='all'
   return structuredClone(state)
 }
 
@@ -42,7 +46,8 @@ export function rememberBindings(open: boolean) {
 export function setView(args: Record<string, unknown>) {
   if (!Project) throw new Error('Open a project first')
   const next = viewState()
-  if (args.component_search !== undefined || args.component_category !== undefined) next.component_page = 1
+  if (args.component_search !== undefined || args.component_category !== undefined || args.component_pack!==undefined) next.component_page = 1
+  if(args.component_pack!==undefined)next.component_category='all'
   for (const [key, value] of Object.entries(args)) {
     if (!(key in defaults)) throw new Error(`Unknown view option: ${key}`)
     if (key === 'layout' && value !== 'gui' && value !== 'split') throw new Error('Expected gui or split')
@@ -53,7 +58,8 @@ export function setView(args: Record<string, unknown>) {
     if (key === 'split_ratio' && !(typeof value === 'number' && value >= 25 && value <= 75)) throw new Error('Split ratio must be 25–75')
     if (['pan_x', 'pan_y'].includes(key) && !(typeof value === 'number' && Number.isFinite(value) && Math.abs(value) <= 100000)) throw new Error('Pan must be within ±100000 screen pixels')
     if (key === 'component_search' && !(typeof value === 'string' && value.length <= 100)) throw new Error('Component search is limited to 100 characters')
-    if (key === 'component_category' && value !== 'all' && !CATEGORIES.some(c => c.id === value)) throw new Error('Unknown component category')
+    if (key === 'component_category' && value !== 'all' && !componentCategories().some(c => c.id === value)) throw new Error('Unknown component category')
+    if(key==='component_pack'&&!['all','builtin'].includes(String(value))&&!library().list().some(e=>e.enabled&&`${e.pack.id}@${e.pack.version}`===value))throw Error('Unknown component pack')
     if (key === 'component_page' && !(Number.isInteger(value) && Number(value) >= 1 && Number(value) <= 100000)) throw new Error('Invalid component page')
     if (key === 'selection_mode' && !['group', 'component'].includes(String(value))) throw new Error('Invalid selection mode')
     if (key === 'align_target' && !['auto', 'selection', 'canvas', 'parent'].includes(String(value))) throw new Error('Invalid alignment target')
@@ -61,7 +67,7 @@ export function setView(args: Record<string, unknown>) {
     if (key === 'layer_search' && !(typeof value === 'string' && value.length <= 100)) throw new Error('Layer search is limited to 100 characters')
     Object.assign(next, { [key]: value })
   }
-  next.component_page = componentPage(next.component_search, next.component_category, next.component_page).page
+  next.component_page = componentPage(next.component_search, next.component_category, next.component_page,allComponents(next.component_pack)).page
   memory(Project).view = structuredClone(next)
   refresh()
   return next

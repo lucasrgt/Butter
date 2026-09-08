@@ -11,6 +11,8 @@ export interface SemanticConfig {
   tab_index?: number
   bindings?: Partial<Record<BindingField, string>>
   action?: string
+  capabilities?: string[]
+  attributes?: Record<string,string>
 }
 export const SEMANTIC_ROLES: Record<Kind, readonly string[]> = {
 gas: ['tank'], flame: ['flame'], button: ['button'], slider: ['slider'], checkbox: ['checkbox'], toggle: ['toggle'], radio: ['radio'], scrollbar: ['scrollbar'], tab: ['tab'], separator: ['separator'],   screen: ['screen'], row: ['group', 'region', 'panel', 'generic'], column: ['group', 'region', 'panel', 'generic'],

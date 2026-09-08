@@ -1,0 +1,50 @@
+{
+  "$schema": "schemas/pack.schema.json",
+  "schema": "butter.pack.v1",
+  "id": "butter-tech",
+  "version": "1.0.0",
+  "title": "Tech Pack",
+  "targets": [
+    "b1.7.3"
+  ],
+  "categories": [
+    {
+      "id": "ports",
+      "title": "Ports",
+      "icon": "input"
+    },
+    {
+      "id": "storage",
+      "title": "Storage",
+      "icon": "storage"
+    },
+    {
+      "id": "controls",
+      "title": "Controls",
+      "icon": "tune"
+    }
+  ],
+  "components": [
+    "components/0-fluid-port.json",
+    "components/1-gas-port.json",
+    "components/2-item-port.json",
+    "components/3-energy-cell.json",
+    "components/4-fluid-reservoir.json",
+    "components/5-gas-reservoir.json",
+    "components/6-machine-switch.json",
+    "components/7-status-lamp.json"
+  ],
+  "assets": {
+    "port-mark.png": "assets/image-0.png",
+    "lamp-sheen.png": "assets/image-1.png"
+  },
+  "description": "Original machine controls, storage gauges and semantic ports for Minecraft Beta 1.7.3.",
+  "author": "Butter contributors",
+  "license": "MIT",
+  "tags": [
+    "technology",
+    "machine",
+    "energy",
+    "fluid"
+  ]
+}

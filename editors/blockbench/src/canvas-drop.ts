@@ -7,12 +7,13 @@ import { attempt } from './dom.ts'
 
 export const COMPONENT_MIME = 'application/x-butter-component'
 export const LAYERS_MIME = 'application/x-butter-layers'
+export const LIBRARY_MIME='application/x-butter-library-component'
 export function canvasDrop(viewport: HTMLElement, canvas: HTMLCanvasElement) {
-  const accepts = (event: DragEvent) => !viewState().source && [COMPONENT_MIME, LAYERS_MIME].some(type => event.dataTransfer?.types.includes(type))
+  const accepts = (event: DragEvent) => !viewState().source && [COMPONENT_MIME, LAYERS_MIME,LIBRARY_MIME].some(type => event.dataTransfer?.types.includes(type))
   const over = (event: DragEvent) => {
     if (!accepts(event)) return
     event.preventDefault(); event.stopPropagation(); viewport.classList.add('butter-drop-target')
-    event.dataTransfer!.dropEffect = event.dataTransfer!.types.includes(COMPONENT_MIME) ? 'copy' : 'move'
+    event.dataTransfer!.dropEffect = event.dataTransfer!.types.includes(LAYERS_MIME) ? 'move' : 'copy'
   }
   const leave = () => viewport.classList.remove('butter-drop-target')
   const drop = (event: DragEvent) => {
@@ -22,7 +23,11 @@ export function canvasDrop(viewport: HTMLElement, canvas: HTMLCanvasElement) {
       const rect = canvas.getBoundingClientRect(), view = viewState(), snap = (n: number) => view.snap ? Math.round(n / view.grid_size) * view.grid_size : Math.round(n)
       const x = snap((event.clientX - rect.left) * 176 / rect.width), y = snap((event.clientY - rect.top) * 166 / rect.height)
       const kind = event.dataTransfer!.getData(COMPONENT_MIME)
-      if (kind) {
+      const custom=event.dataTransfer!.getData(LIBRARY_MIME)
+      if(custom) {
+        const data=JSON.parse(custom),store=current(),parent=targetParent(store.snapshot().root,store.selected)
+        call('component',{action:'add',pack:data.pack,component:data.component,parent_id:parent.id,x,y})
+      } else if (kind) {
         if (!PALETTE.includes(kind as typeof PALETTE[number])) throw new Error('Unknown component')
         const store = current(), doc = store.snapshot(), parent = kind === 'player' ? doc.root : targetParent(doc.root, store.selected)
         call('add', { kind, parent_id: parent.id, x, y })

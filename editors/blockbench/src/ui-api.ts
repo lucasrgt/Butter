@@ -7,6 +7,8 @@ import { camera } from './machine-view.ts'
 import { readLocal, writeLocal } from './local-files.ts'
 import { call } from './api.ts'
 import { previewPng } from './preview.ts'
+import { prepareImages } from './library/images.ts'
+import { exportBundle } from './library/bundle.ts'
 
 export const extraCommands = ['view', 'assets', 'versions', 'camera', 'panels', 'attach', 'file']
 export function extraCall(command: string, args: Record<string, unknown>): unknown {
@@ -66,12 +68,16 @@ export function extraCall(command: string, args: Record<string, unknown>): unkno
   if (command === 'file') {
     if (typeof args.path !== 'string') throw new Error('Expected absolute file path')
     if (!/^(?:[A-Za-z]:[\\/]|\/)/.test(args.path)) throw new Error('Use an absolute file path')
-    if (args.action === 'open') return call('import', { text: new TextDecoder().decode(readLocal(args.path, 1_000_000)) })
+    if (args.action === 'open') return call('import', { text: new TextDecoder().decode(readLocal(args.path, 10*1024*1024)) })
     if (args.action !== 'save') throw new Error('Expected open or save')
     if (args.format === 'png') {
-      const data = previewPng(current().snapshot(), Number(args.scale ?? 3)).split(',')[1]
-      writeLocal(args.path, Uint8Array.from(atob(data), c => c.charCodeAt(0)))
-    } else writeLocal(args.path, (call('export', { format: args.format ?? 'document' }) as { text: string }).text)
+      const doc=current().snapshot(),path=args.path
+      return prepareImages(doc).then(()=>{
+        const data = previewPng(doc, Number(args.scale ?? 3)).split(',')[1]
+        writeLocal(path, Uint8Array.from(atob(data), c => c.charCodeAt(0)));return {saved:path}
+      })
+    } else if(args.format==='bundle')writeLocal(args.path,exportBundle(current().snapshot()))
+    else writeLocal(args.path, (call('export', { format: args.format ?? 'document' }) as { text: string }).text)
     return { saved: args.path }
   }
   refresh()

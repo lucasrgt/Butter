@@ -1,0 +1,148 @@
+{
+  "$schema": "../schemas/component.schema.json",
+  "schema": "butter.component.v1",
+  "id": "item-port",
+  "title": "Item port",
+  "category": "ports",
+  "base": "slot",
+  "variants": [
+    {
+      "id": "input",
+      "title": "Input",
+      "w": 22,
+      "h": 22,
+      "base_variant": "normal",
+      "props": {
+        "accent": "#d7b96b"
+      },
+      "semantics": {
+        "capabilities": [
+          "item.insert"
+        ],
+        "attributes": {
+          "tech.resource": "item",
+          "tech.direction": "input",
+          "tech.contract": "v1"
+        }
+      },
+      "base_bounds": [
+        2,
+        2,
+        18,
+        18
+      ]
+    },
+    {
+      "id": "output",
+      "title": "Output",
+      "w": 22,
+      "h": 22,
+      "base_variant": "normal",
+      "props": {
+        "accent": "#e6a64b"
+      },
+      "semantics": {
+        "capabilities": [
+          "item.extract"
+        ],
+        "attributes": {
+          "tech.resource": "item",
+          "tech.direction": "output",
+          "tech.contract": "v1"
+        }
+      },
+      "base_bounds": [
+        2,
+        2,
+        18,
+        18
+      ]
+    },
+    {
+      "id": "bidirectional",
+      "title": "Bidirectional",
+      "w": 22,
+      "h": 22,
+      "base_variant": "normal",
+      "props": {
+        "accent": "#d7b96b"
+      },
+      "semantics": {
+        "capabilities": [
+          "item.insert",
+          "item.extract"
+        ],
+        "attributes": {
+          "tech.resource": "item",
+          "tech.direction": "bidirectional",
+          "tech.contract": "v1"
+        }
+      },
+      "base_bounds": [
+        2,
+        2,
+        18,
+        18
+      ]
+    }
+  ],
+  "description": "Container slot with a item transfer contract and an outer port outline.",
+  "icon": "inventory_2",
+  "tags": [
+    "item",
+    "port",
+    "input",
+    "output"
+  ],
+  "fields": [
+    {
+      "key": "accent",
+      "label": "Outline color",
+      "type": "color",
+      "default": "#d7b96b"
+    },
+    {
+      "key": "marked",
+      "label": "Show port marker",
+      "type": "boolean",
+      "default": true
+    }
+  ],
+  "draw_base": true,
+  "layers": [
+    {
+      "type": "outline",
+      "x": 0,
+      "y": 0,
+      "w": 22,
+      "h": 22,
+      "color": "$accent",
+      "thickness": 1
+    },
+    {
+      "type": "image",
+      "x": 16,
+      "y": 16,
+      "w": 6,
+      "h": 6,
+      "asset": "port-mark.png",
+      "frames": 1,
+      "crop": [
+        0,
+        0,
+        6,
+        6
+      ],
+      "frame_ms": 100,
+      "when": {
+        "field": "marked",
+        "equals": true
+      }
+    }
+  ],
+  "binding_hints": {
+    "item": "itemPortItem",
+    "count": "itemPortCount",
+    "enabled": "itemPortEnabled"
+  }
+}

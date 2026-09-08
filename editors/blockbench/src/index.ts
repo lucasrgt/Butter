@@ -12,6 +12,8 @@ import { element, attempt } from './dom.ts'
 import { disposeContextMenu } from './context-menu.ts'
 import { disposeHelp } from './capabilities.ts'
 import { disposeSemanticTree } from './semantics-dialog.ts'
+import { disposeImages } from './library/images.ts'
+import { disposeLibrary } from './library/manager.ts'
 
 const panels: Panel[] = []
 const cleanups: Array<() => void> = []
@@ -33,7 +35,7 @@ function panel(id: string, name: string, side: 'left' | 'right', render: (root: 
 }
 
 BBPlugin.register('blockbench_butter', {
-  title: 'Blockbench Butter', author: 'lucasrgt', version: '0.8.0', min_version: '5.0.0',
+  title: 'Blockbench Butter', author: 'lucasrgt', version: '0.9.0', min_version: '5.0.0',
   description: 'Butter GUI authoring for Minecraft Beta 1.7.3: components, layers, preview and MCP integration.',
   icon: 'dashboard_customize', variant: 'both', tags: ['GUI', 'Minecraft'],
   onload() {
@@ -69,7 +71,7 @@ BBPlugin.register('blockbench_butter', {
     if (Modes.selected === mode && Project) Modes.options.edit.select()
     for (const project of ModelProject.all) if (project.mode === 'butter_gui') project.mode = 'edit'
     disposeHelp(); disposeContextMenu(); disposeSemanticTree()
-    disposeAssets(); disposeMaterialPack()
+    disposeAssets(); disposeMaterialPack();disposeImages();disposeLibrary()
     mode?.delete()
     mode?.vue?.$destroy()
     document.getElementById('mode_screen_butter_gui')?.remove()

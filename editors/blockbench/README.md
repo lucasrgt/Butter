@@ -1,6 +1,6 @@
-# Blockbench Butter 0.8
+# Blockbench Butter 0.9
 
-A native Blockbench mode for authoring Butter interfaces, with 32 dedicated tools
+A native Blockbench mode for authoring Butter interfaces, with 34 dedicated tools
 in the existing Pixel Harness MCP server. Uses the shared Butter builder tree
 and presets, native dockable panels and the existing native 3D viewport. No second server,
 iframe or separate application is required.
@@ -28,9 +28,11 @@ without MCP; the companion API is `globalThis.BlockbenchButter`, version 1.
 - **Component library:** search titles/keywords, combine with Layout, Inventory,
   Machine or Input categories, and browse grouped results. Each page contains
   at most 10 components across all groups. Pagination appears only when needed;
-  the current eight components fit on one page. Search remains focused as results
+  custom packs retain their declared categories. Search remains focused as results
   update. `butter_view` controls search/category/page; `butter_components` queries
-  the catalog without changing the current filters.
+  the catalog without changing the current filters. The pack filter and **Packs**
+  manager add declarative JSON/PNG components, immutable versions, import/export,
+  combination and the original Tech Pack. See [Component packs](COMPONENT-PACKS.md).
 - **Position:** edit X/Y, drag components, or move the selected component/group
   with arrows (1 pixel) and Shift + arrows (10 pixels). Holding an arrow waits
   350 ms, then repeats every 75 ms. Release, focus change to a text field,
@@ -110,6 +112,8 @@ the Java runtime. Custom energy/tank gauges have no direct vanilla counterpart.
 | Documents and catalog | `butter_components`, `butter_begin`, `butter_inspect`, `butter_import`, `butter_export`, `butter_file` |
 | Components and layers | `butter_add`, `butter_update`, `butter_move`, `butter_duplicate`, `butter_remove`, `butter_select`, `butter_history` |
 | Variants and visual tests | `butter_properties` |
+| Declarative packs and instances | `butter_library`, `butter_component` |
+| Semantic contracts | `butter_semantics` |
 | Pixel positioning and alignment | `butter_nudge`, `butter_position`, `butter_align`, `butter_distribute` |
 | Batch editing and hierarchy | `butter_edit`, `butter_clipboard`, `butter_tree`, `butter_frame` |
 | Command reference | `butter_capabilities` |

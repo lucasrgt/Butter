@@ -1,4 +1,5 @@
-import { LEAF_SIZE, type Kind, type Widget } from '../../gui-builder/src/model/types.ts'
+import { LEAF_SIZE, PALETTE, type Kind, type Widget } from '../../gui-builder/src/model/types.ts'
+import type { ComponentDefinition } from './library/types.ts'
 
 export type PropertyValue = string | number | boolean
 export type PropertyValues = Record<string, PropertyValue>
@@ -28,11 +29,14 @@ export const SUBSTANCES = {
   water: '#3344ff', heavy_water: '#1a237e', lava: '#ff6600', oil: '#403932', honey: '#d89c30',
   steam: '#d7e8ec', oxygen: '#ff8888', hydrogen: '#88bbff', ozone: '#99ddff', chlorine: '#bed25b', custom: '#7799bb',
 }
-export function componentVariants(kind: Kind): Variant[] {
+export function componentVariants(kind: Kind, definition?: ComponentDefinition): Variant[] {
+  if (definition) return definition.variants
+  if(!PALETTE.includes(kind))return []
   const size = LEAF_SIZE[kind as keyof typeof LEAF_SIZE]
   return variants[kind] ?? (size ? [variant('normal', 'Normal', size.w, size.h)] : [])
 }
-export function componentFields(kind: Kind): Field[] {
+export function componentFields(kind: Kind, definition?: ComponentDefinition): Field[] {
+  if (definition) return [...componentFields(kind), ...definition.fields ?? []]
   if (GAUGES.includes(kind)) return [num('max', 'Capacity / maximum', 100)]
   if (kind === 'search') return [text('placeholder', 'Placeholder', 'Search...')]
   if (kind === 'button' || kind === 'tab') return [text('text', 'Text', kind === 'button' ? 'Button' : 'Tab')]
@@ -55,7 +59,7 @@ export function previewFields(kind: Kind): Field[] {
 export function values(fields: Field[], overrides?: PropertyValues): PropertyValues {
   return { ...Object.fromEntries(fields.map(field => [field.key, field.default])), ...overrides }
 }
-function readValues(fields: Field[], raw: unknown): PropertyValues {
+export function readValues(fields: Field[], raw: unknown): PropertyValues {
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) throw new Error('Properties must be an object')
   const result: PropertyValues = {}
   for (const [key, value] of Object.entries(raw)) {
@@ -71,7 +75,7 @@ function readValues(fields: Field[], raw: unknown): PropertyValues {
   }
   return result
 }
-export function readComponentMaps(root: Widget, components: unknown, preview: unknown) {
+export function readComponentMaps(root: Widget, components: unknown, preview: unknown, definitions: Record<string,ComponentDefinition> = {}) {
   const nodes = new Map<string, Widget>(), visit = (node: Widget) => { nodes.set(node.id, node); node.children.forEach(visit) }; visit(root)
   const result: { components: Record<string, ComponentConfig>; preview: Record<string, PropertyValues> } = { components: {}, preview: {} }
   for (const [section, raw] of [['components', components], ['preview', preview]] as const) {
@@ -84,16 +88,16 @@ export function readComponentMaps(root: Widget, components: unknown, preview: un
       if (!config || typeof config !== 'object' || Array.isArray(config) || Object.keys(config).some(key => !['variant', 'props'].includes(key))) throw new Error('Invalid component configuration')
       const value = config as ComponentConfig, next: ComponentConfig = {}
       if (value.variant !== undefined) {
-        if (!componentVariants(node.kind).some(v => v.id === value.variant)) throw new Error(`Invalid variant for ${node.kind}`)
+        if (!componentVariants(node.kind,definitions[id]).some(v => v.id === value.variant)) throw new Error(`Invalid variant for ${node.kind}`)
         next.variant = value.variant
       }
-      if (value.props !== undefined) next.props = readValues(componentFields(node.kind), value.props)
+      if (value.props !== undefined) next.props = readValues(componentFields(node.kind,definitions[id]), value.props)
       result.components[id] = next
     }
   }
   return result
 }
-export function componentSize(kind: Kind, config?: ComponentConfig) {
-  const list = componentVariants(kind)
+export function componentSize(kind: Kind, config?: ComponentConfig, definition?:ComponentDefinition) {
+  const list = componentVariants(kind,definition)
   return list.find(item => item.id === config?.variant) ?? list[0]
 }

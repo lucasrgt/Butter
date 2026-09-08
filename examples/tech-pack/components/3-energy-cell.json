@@ -1,0 +1,120 @@
+{
+  "$schema": "../schemas/component.schema.json",
+  "schema": "butter.component.v1",
+  "id": "energy-cell",
+  "title": "Energy cell",
+  "category": "storage",
+  "base": "energy",
+  "variants": [
+    {
+      "id": "tall",
+      "title": "Tall",
+      "w": 12,
+      "h": 58,
+      "base_variant": "tall",
+      "layers": [
+        {
+          "type": "outline",
+          "x": 0,
+          "y": 0,
+          "w": 12,
+          "h": 58,
+          "color": "$accent",
+          "thickness": 1
+        }
+      ],
+      "base_bounds": [
+        2,
+        2,
+        8,
+        54
+      ]
+    },
+    {
+      "id": "small",
+      "title": "Small",
+      "w": 12,
+      "h": 22,
+      "base_variant": "small",
+      "layers": [
+        {
+          "type": "outline",
+          "x": 0,
+          "y": 0,
+          "w": 12,
+          "h": 22,
+          "color": "$accent",
+          "thickness": 1
+        }
+      ],
+      "base_bounds": [
+        2,
+        2,
+        8,
+        18
+      ]
+    },
+    {
+      "id": "wide",
+      "title": "Wide",
+      "w": 22,
+      "h": 58,
+      "base_variant": "wide",
+      "layers": [
+        {
+          "type": "outline",
+          "x": 0,
+          "y": 0,
+          "w": 22,
+          "h": 58,
+          "color": "$accent",
+          "thickness": 1
+        }
+      ],
+      "base_bounds": [
+        2,
+        2,
+        18,
+        54
+      ]
+    }
+  ],
+  "description": "Energy cell with capacity bindings and declared storage capabilities.",
+  "icon": "bolt",
+  "tags": [
+    "energy",
+    "storage",
+    "gauge"
+  ],
+  "fields": [
+    {
+      "key": "accent",
+      "label": "Frame color",
+      "type": "color",
+      "default": "#54d895"
+    }
+  ],
+  "props": {
+    "max": 100000
+  },
+  "preview": {
+    "level": 65
+  },
+  "semantics": {
+    "capabilities": [
+      "energy.store",
+      "energy.inspect"
+    ],
+    "attributes": {
+      "tech.resource": "energy",
+      "tech.direction": "storage",
+      "tech.contract": "v1"
+    }
+  },
+  "draw_base": true,
+  "layers": [],
+  "binding_hints": {
+    "value": "energyStored",
+    "max": "energyCapacity"
+  }
+}

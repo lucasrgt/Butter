@@ -4,8 +4,10 @@ import { requireVersion } from './versions.ts'
 import type { SemanticConfig } from './semantics-catalog.ts'
 import { readComponentMaps, type ComponentConfig, type PropertyValues } from './component-properties.ts'
 import { readSemantics } from './semantics-model.ts'
+import { readLibrary, definition, resolvedSemantics } from './library/document.ts'
+import type { LibraryDocument } from './library/types.ts'
 
-export interface ButterDocument {
+export interface ButterDocument extends LibraryDocument {
   components?: Record<string, ComponentConfig>
   preview?: Record<string, PropertyValues>
   version: 1
@@ -31,7 +33,7 @@ export function readDocument(value: unknown): ButterDocument {
     for (const key of Object.keys(node)) {
       if (!['id', 'kind', 'name', 'children'].includes(key)) throw new Error(`Unsupported widget field: ${key}`)
     }
-    if (typeof node.id !== 'string' || !/^[A-Za-z0-9_.-]{1,100}$/.test(node.id)) {
+    if (typeof node.id !== 'string' || !/^[A-Za-z0-9_.-]{1,100}$/.test(node.id) || ['__proto__','constructor','prototype'].includes(node.id)) {
       throw new Error('Widget id must contain 1–100 letters, digits, dots, dashes or underscores')
     }
     if (ids.has(node.id)) throw new Error(`Duplicate widget id: ${node.id}`)
@@ -76,8 +78,12 @@ export function readDocument(value: unknown): ButterDocument {
     }
     positions[id] = { x: point.x, y: point.y }
   }
-  return { version: 1, root, hidden: [...new Set(doc.hidden)], locked: [...new Set(doc.locked ?? [])], target, positions,
-    semantics: readSemantics(root, doc.semantics), ...readComponentMaps(root, doc.components, doc.preview) }
+  const library = readLibrary(root,doc)
+  const definitions = Object.fromEntries(Object.keys(library.component_refs!).map(id=>[id,definition(library,id)!]))
+  const result:ButterDocument = { version: 1, root, hidden: [...new Set(doc.hidden)], locked: [...new Set(doc.locked ?? [])], target, positions,...library,
+    semantics: readSemantics(root, doc.semantics), ...readComponentMaps(root, doc.components, doc.preview,definitions) }
+  resolvedSemantics(result)
+  return result
 }
 
 export function layoutWarnings(doc: ButterDocument): string[] {

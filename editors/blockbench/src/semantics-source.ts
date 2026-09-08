@@ -9,6 +9,8 @@ export function semanticProps(node: Widget, config: SemanticConfig, exposed = tr
     const fields = [`id: ${JSON.stringify(config.id)}`, `role: ${JSON.stringify(config.role ?? SEMANTIC_ROLES[node.kind][0])}`,
       `label: ${JSON.stringify(config.label ?? node.name)}`]
     if (config.description) fields.push(`description: ${JSON.stringify(config.description)}`)
+    if (config.capabilities?.length) fields.push(`capabilities: ${JSON.stringify(config.capabilities.join(','))}`)
+    if (Object.keys(config.attributes??{}).length) fields.push(`attributes: (${Object.entries(config.attributes!).map(([key,value])=>`${JSON.stringify(key)}: ${JSON.stringify(value)}`).join(', ')})`)
     result.push(`semantics: (${fields.join(', ')})`)
   }
   if (node.kind === 'slot') result.push(`container_index: ${config.slot}`)

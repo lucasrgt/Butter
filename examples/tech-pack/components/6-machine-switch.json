@@ -1,0 +1,36 @@
+{
+  "$schema": "../schemas/component.schema.json",
+  "schema": "butter.component.v1",
+  "id": "machine-switch",
+  "title": "Machine switch",
+  "category": "controls",
+  "base": "toggle",
+  "variants": [
+    {
+      "id": "normal",
+      "title": "Normal",
+      "w": 20,
+      "h": 12,
+      "base_variant": "normal"
+    }
+  ],
+  "icon": "power_settings_new",
+  "tags": [
+    "power",
+    "control"
+  ],
+  "fields": [],
+  "semantics": {
+    "capabilities": [
+      "machine.enable"
+    ],
+    "attributes": {
+      "tech.control": "power"
+    }
+  },
+  "draw_base": true,
+  "layers": [],
+  "binding_hints": {
+    "value": "machineEnabled"
+  }
+}

@@ -63,6 +63,17 @@ public final class ButterCompilerTest {
         WidgetSpec paired = ButterCompiler.compileSource("Panel.butter",
                 "Button(\"Craft\", id: \"craft\", enabled: canCraft, action: craft)", Panel.class);
         require(paired.prop("action") != null, "action binding");
+        for (String metadata : new String[] {
+                "attributes: (enabled: \"false\")", "attributes: (\"tech.value\": 3)",
+                "capabilities: \"enabled\"", "capabilities: \"fluid.insert,,fluid.extract\"",
+                "attributes: (\"tech.value\": \"a\", \"tech.value\": \"b\")" }) {
+            try {
+                ButterCompiler.compileSource("BadPort.butter", "Slot(semantics: (" + metadata + "))", null);
+                throw new IllegalStateException("invalid integration metadata must fail");
+            } catch (ButterCompileException expected) {
+                require(expected.getMessage().contains("B1502") || expected.getMessage().contains("B1001"), "integration diagnostic");
+            }
+        }
         WidgetSpec chrome = ButterCompiler.compile(java.nio.file.Paths.get("examples/vanilla/Chrome.butter"));
         require("Row".equals(chrome.type()) && chrome.children().size() == 3, "chrome row");
         require("SearchBar".equals(chrome.children().get(1).children().get(0).type()), "search");

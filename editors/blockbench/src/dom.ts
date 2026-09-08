@@ -31,10 +31,9 @@ export function group(title: string, ...children: HTMLElement[]) {
   return node
 }
 
-export function attempt(action: () => void) {
-  try { action() } catch (error) {
-    Blockbench.showQuickMessage(error instanceof Error ? error.message : String(error), 4000)
-  }
+export function attempt(action: () => unknown) {
+  const report=(error:unknown)=>Blockbench.showQuickMessage(error instanceof Error ? error.message : String(error),4000)
+  try { const result=action();if(result instanceof Promise)void result.catch(report) } catch (error) { report(error) }
 }
 
 export function label(text: string, input: HTMLElement) {

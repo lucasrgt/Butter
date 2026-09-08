@@ -4,6 +4,7 @@ import { visibleBoxes, type ButterDocument } from './document.ts'
 import { minecraftAssets } from './minecraft/assets.ts'
 import { paintMinecraft, paintFurnaceReference } from './minecraft/painter.ts'
 import { selectedBounds } from './position.ts'
+import { paintCustom } from './library/render.ts'
 
 export function paint(canvas: HTMLCanvasElement, doc: ButterDocument, scale: number, selected: string | null, time = 0) {
   canvas.width = 176 * scale
@@ -17,11 +18,11 @@ export function paint(canvas: HTMLCanvasElement, doc: ButterDocument, scale: num
   if (assets) {
     context.save()
     context.scale(scale, scale)
-    paintMinecraft(context, assets, visibleBoxes(doc), doc.root.name)
+    paintMinecraft(context, assets, visibleBoxes(doc).filter(b=>!doc.component_refs?.[b.id]), doc.root.name)
     context.restore()
-  } else drawGui(context, scale, visibleBoxes(doc), null, doc.root.name)
+  } else drawGui(context, scale, visibleBoxes(doc).filter(b=>!doc.component_refs?.[b.id]), null, doc.root.name)
   context.save(); context.scale(scale, scale)
-  for (const box of visibleBoxes(doc)) paintComponent(context, box, doc, assets, time)
+  for (const box of visibleBoxes(doc)) if(!paintCustom(context,box,doc,assets,time))paintComponent(context, box, doc, assets, time)
   context.restore()
   const bounds = selected && selected !== doc.root.id ? selectedBounds(doc, selected) : null
   if (bounds) {

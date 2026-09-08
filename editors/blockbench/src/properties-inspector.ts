@@ -4,6 +4,8 @@ import { call } from './api.ts'
 import { element, label, button, attempt } from './dom.ts'
 import { inheritedFlag } from './selection.ts'
 import { componentVariants, componentFields, previewFields, values, type Field, type PropertyValue } from './component-properties.ts'
+import { definition, resolvedComponent } from './library/document.ts'
+import { instanceInspector } from './library/inspector.ts'
 
 const open = new Map<string, boolean>()
 function update(id: string, section: string, patch: object) { call('properties', { action: 'update', id, section, patch }) }
@@ -22,10 +24,11 @@ function input(field: Field, value: PropertyValue, change: (value: PropertyValue
   return label(field.label, control)
 }
 export function propertiesInspector(node: Widget) {
-  const root = element('div', 'butter-component-properties'), doc = current().snapshot(), variants = componentVariants(node.kind)
+  const root = element('div', 'butter-component-properties'), doc = current().snapshot(), def=definition(doc,node.id),resolved=resolvedComponent(doc,node.id),variants = componentVariants(node.kind,def)
   if (!variants.length) return root
   const disabled = inheritedFlag(doc, node.id, 'locked'), config = doc.components?.[node.id]
   root.append(element('h3', 'butter-title', 'Component'))
+  if(def)root.append(instanceInspector(node.id))
   if (variants.length > 1) {
     const select = element('select'); select.setAttribute('aria-label', 'Component variant'); select.disabled = disabled
     for (const variant of variants) { const option = element('option', '', `${variant.title} · ${variant.w} × ${variant.h}`); option.value = variant.id; select.append(option) }
@@ -33,13 +36,13 @@ export function propertiesInspector(node: Widget) {
     select.onchange = () => attempt(() => update(node.id, 'components', { variant: select.value }))
     root.append(label('Variant', select))
   }
-  const props = values(componentFields(node.kind), config?.props)
-  for (const field of componentFields(node.kind)) root.append(input(field, props[field.key], value => update(node.id, 'components', { props: { [field.key]: value } }), 'Property', disabled))
+  const props = values(componentFields(node.kind,def), resolved.props)
+  for (const field of componentFields(node.kind,def)) root.append(input(field, props[field.key], value => update(node.id, 'components', { props: { [field.key]: value } }), 'Property', disabled))
   const details = element('details', 'butter-preview-details'), key = `${Project?.uuid ?? 'none'}:${node.id}`
   details.open = open.get(key) ?? true
   details.ontoggle = () => open.set(key, details.open)
   details.append(element('summary', '', 'Visual test'), element('p', 'butter-metrics', 'This instance only · saved with the editor document'))
-  const fields = previewFields(node.kind), state = values(fields, doc.preview?.[node.id])
+  const fields = previewFields(node.kind), state = values(fields, resolved.preview)
   for (const field of fields) {
     if (field.key === 'color' && state.substance !== 'custom') continue
     if (field.key === 'level') {

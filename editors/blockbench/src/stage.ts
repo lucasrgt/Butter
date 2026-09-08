@@ -15,6 +15,7 @@ import { canvasNavigation } from './canvas-navigation.ts'
 import { canvasInteraction } from './canvas-interaction.ts'
 import { paintSelection } from './selection-overlay.ts'
 import { canvasDrop } from './canvas-drop.ts'
+import { customAnimation } from './library/render.ts'
 
 export function mountViewer(root: HTMLElement) {
   root.className = 'butter-ui butter-viewer'
@@ -62,7 +63,7 @@ export function mountViewer(root: HTMLElement) {
   const animation = window.setInterval(() => {
     if (!Project || document.hidden || Modes.selected !== Modes.options.butter_gui || viewState().source) return
     const doc = current().snapshot()
-    if (!visibleBoxes(doc).some(box => ['tank', 'gas'].includes(box.kind) && Number(doc.preview?.[box.id]?.level) > 0 && doc.preview?.[box.id]?.animated !== false)) return
+    if (!visibleBoxes(doc).some(box => customAnimation(doc,box.id) || ['tank', 'gas'].includes(box.kind) && Number(doc.preview?.[box.id]?.level) > 0 && doc.preview?.[box.id]?.animated !== false)) return
     paint(canvas, doc, canvasScale, null, performance.now()); paintGrid(canvas.getContext('2d')!, canvasScale, viewState())
   }, 50)
   const observer = new ResizeObserver(render); observer.observe(viewport)

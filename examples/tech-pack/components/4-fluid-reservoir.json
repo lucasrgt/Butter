@@ -1,0 +1,120 @@
+{
+  "$schema": "../schemas/component.schema.json",
+  "schema": "butter.component.v1",
+  "id": "fluid-reservoir",
+  "title": "Fluid reservoir",
+  "category": "storage",
+  "base": "tank",
+  "variants": [
+    {
+      "id": "big",
+      "title": "Big",
+      "w": 22,
+      "h": 58,
+      "base_variant": "big",
+      "layers": [
+        {
+          "type": "outline",
+          "x": 0,
+          "y": 0,
+          "w": 22,
+          "h": 58,
+          "color": "$accent",
+          "thickness": 1
+        }
+      ],
+      "base_bounds": [
+        2,
+        2,
+        18,
+        54
+      ]
+    },
+    {
+      "id": "small",
+      "title": "Small",
+      "w": 22,
+      "h": 22,
+      "base_variant": "small",
+      "layers": [
+        {
+          "type": "outline",
+          "x": 0,
+          "y": 0,
+          "w": 22,
+          "h": 22,
+          "color": "$accent",
+          "thickness": 1
+        }
+      ],
+      "base_bounds": [
+        2,
+        2,
+        18,
+        18
+      ]
+    },
+    {
+      "id": "wide",
+      "title": "Wide",
+      "w": 40,
+      "h": 58,
+      "base_variant": "wide",
+      "layers": [
+        {
+          "type": "outline",
+          "x": 0,
+          "y": 0,
+          "w": 40,
+          "h": 58,
+          "color": "$accent",
+          "thickness": 1
+        }
+      ],
+      "base_bounds": [
+        2,
+        2,
+        36,
+        54
+      ]
+    }
+  ],
+  "description": "Fluid reservoir with capacity bindings and declared storage capabilities.",
+  "icon": "opacity",
+  "tags": [
+    "fluid",
+    "storage",
+    "gauge"
+  ],
+  "fields": [
+    {
+      "key": "accent",
+      "label": "Frame color",
+      "type": "color",
+      "default": "#479cff"
+    }
+  ],
+  "props": {
+    "max": 16000
+  },
+  "preview": {
+    "level": 65
+  },
+  "semantics": {
+    "capabilities": [
+      "fluid.store",
+      "fluid.inspect"
+    ],
+    "attributes": {
+      "tech.resource": "fluid",
+      "tech.direction": "storage",
+      "tech.contract": "v1"
+    }
+  },
+  "draw_base": true,
+  "layers": [],
+  "binding_hints": {
+    "value": "fluidStored",
+    "max": "fluidCapacity"
+  }
+}

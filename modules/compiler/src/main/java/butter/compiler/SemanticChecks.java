@@ -15,7 +15,11 @@ final class SemanticChecks {
             for (Map.Entry<?, ?> entry : ((Map<?, ?>) metadata).entrySet()) {
                 String key = String.valueOf(entry.getKey());
                 Object value = entry.getValue();
-                if (!"id".equals(key) && !"role".equals(key) && !"label".equals(key) && !"description".equals(key)) {
+                if ("attributes".equals(key)) {
+                    attributes(value, errors);
+                } else if ("capabilities".equals(key)) {
+                    capabilities(value, errors);
+                } else if (!"id".equals(key) && !"role".equals(key) && !"label".equals(key) && !"description".equals(key)) {
                     error(errors, key, "id, role, label or description", value);
                 } else if (!(value instanceof String) || (("id".equals(key) || "role".equals(key)) && ((String) value).trim().isEmpty())) {
                     error(errors, key, "nonempty string", value);
@@ -26,6 +30,35 @@ final class SemanticChecks {
         }
         integer(props, "container_index", "Slot".equals(type), 4095, errors);
         integer(props, "tabIndex", "SearchBar".equals(type), 511, errors);
+    }
+
+    private static void capabilities(Object value, List<Diagnostic> errors) {
+        if (!(value instanceof String) || ((String) value).length() > 3231) {
+            error(errors, "capabilities", "up to 32 namespaced capabilities", value);
+            return;
+        }
+        String[] names = ((String) value).split(",", -1);
+        if (names.length > 32) error(errors, "capabilities", "up to 32 capabilities", value);
+        for (String name : names) {
+            if (name.length() > 100 || !name.matches("[a-z][a-z0-9_-]*(\\.[a-z][a-z0-9_-]*)+")) {
+                error(errors, "capabilities", "namespaced identifiers of at most 100 characters", name);
+            }
+        }
+    }
+
+    private static void attributes(Object value, List<Diagnostic> errors) {
+        if (!(value instanceof Map) || ((Map<?, ?>) value).size() > 32) {
+            error(errors, "attributes", "record with up to 32 attributes", value);
+            return;
+        }
+        for (Map.Entry<?, ?> entry : ((Map<?, ?>) value).entrySet()) {
+            String key = String.valueOf(entry.getKey());
+            if (key.length() > 100 || !key.matches("[a-z][a-z0-9_-]*(\\.[a-z][a-z0-9_-]*)+")
+                    || !(entry.getValue() instanceof String) || ((String) entry.getValue()).length() > 200
+                    || ((String) entry.getValue()).matches("(?s).*[\\x00-\\x1f\\x7f].*")) {
+                error(errors, key, "namespaced key and printable string (maximum 200 characters)", entry.getValue());
+            }
+        }
     }
 
     private static void integer(Map<String, Object> props, String key, boolean allowed, int max,

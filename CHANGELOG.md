@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- Blockbench Butter 0.9 adds declarative JSON/PNG component packs, a native pack
+  manager, custom variants/properties/layers, pinned project definitions,
+  explicit upgrades, cross-project copying, pack combination, starter schemas
+  and the original eight-component Tech Pack. The MCP bridge has 34 Butter tools.
+- Namespaced capabilities and attributes survive `.butter` compilation and
+  semantic tree export. Integration ZIPs preserve definitions and PNGs for mod
+  renderers; custom visual layers currently render in the editor.
+
 - Migrated the external suite to the isolated Worldline TestKit 0.3.1 Gradle
   project under `tests/worldline`; specs remain Java 8 and use Butter's own
   compiled module classes.

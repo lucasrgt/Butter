@@ -1,0 +1,114 @@
+{
+  "$schema": "../schemas/component.schema.json",
+  "schema": "butter.component.v1",
+  "id": "status-lamp",
+  "title": "Status lamp",
+  "category": "controls",
+  "base": "checkbox",
+  "variants": [
+    {
+      "id": "green",
+      "title": "Running",
+      "w": 12,
+      "h": 12,
+      "base_variant": "normal",
+      "props": {
+        "accent": "#54d895"
+      }
+    },
+    {
+      "id": "amber",
+      "title": "Warning",
+      "w": 12,
+      "h": 12,
+      "base_variant": "normal",
+      "props": {
+        "accent": "#edb44a"
+      }
+    },
+    {
+      "id": "red",
+      "title": "Fault",
+      "w": 12,
+      "h": 12,
+      "base_variant": "normal",
+      "props": {
+        "accent": "#e66058"
+      }
+    }
+  ],
+  "icon": "lightbulb",
+  "fields": [
+    {
+      "key": "accent",
+      "label": "Light color",
+      "type": "color",
+      "default": "#54d895"
+    }
+  ],
+  "preview": {
+    "checked": true
+  },
+  "semantics": {
+    "capabilities": [
+      "machine.status"
+    ],
+    "attributes": {
+      "tech.control": "status"
+    }
+  },
+  "draw_base": false,
+  "layers": [
+    {
+      "type": "rect",
+      "x": 0,
+      "y": 0,
+      "w": 12,
+      "h": 12,
+      "color": "#343b3e"
+    },
+    {
+      "type": "rect",
+      "x": 2,
+      "y": 2,
+      "w": 8,
+      "h": 8,
+      "color": "#555d60"
+    },
+    {
+      "type": "rect",
+      "x": 2,
+      "y": 2,
+      "w": 8,
+      "h": 8,
+      "color": "$accent",
+      "when": {
+        "field": "checked",
+        "equals": true
+      }
+    },
+    {
+      "type": "image",
+      "x": 2,
+      "y": 2,
+      "w": 8,
+      "h": 8,
+      "asset": "lamp-sheen.png",
+      "frames": 2,
+      "crop": [
+        0,
+        0,
+        8,
+        8
+      ],
+      "frame_ms": 500,
+      "when": {
+        "field": "checked",
+        "equals": true
+      }
+    }
+  ],
+  "binding_hints": {
+    "value": "machineRunning"
+  }
+}

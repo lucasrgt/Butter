@@ -133,8 +133,9 @@ final class Parser {
         consume(TokenKind.LPAREN);
         Map<String, ExprAst> fields = new LinkedHashMap<String, ExprAst>();
         while (!at(TokenKind.RPAREN) && !at(TokenKind.EOF)) {
-            String key = consume(TokenKind.IDENT).text;
+            String key = consume(at(TokenKind.STRING) ? TokenKind.STRING : TokenKind.IDENT).text;
             consume(TokenKind.COLON);
+            if (fields.containsKey(key)) throw error("B1001", "Duplicate record field: " + key);
             fields.put(key, parseExpr());
             if (!match(TokenKind.COMMA)) break;
         }

@@ -25,6 +25,18 @@ public final class SemanticTreeTest {
         WidgetSpec alias = ButterCompiler.compileSource("Alias.butter",
                 "FluidTank(id: \"old\", semantics: (id: \"old\", role: fluid_tank, label: \"Tank\"))", null);
         require("tank".equals(SemanticTree.of(alias).byId("old").role), "alias");
+        String portSource = "Slot(0, id: \"fluid.input\", semantics: (id: \"fluid.input\", role: \"slot\", "
+                + "capabilities: \"fluid.insert,fluid.inspect\", attributes: (\"tech.resource\": \"fluid\", "
+                + "\"tech.direction\": \"input\")))";
+        SemanticNode port = SemanticTree.of(ButterCompiler.compileSource("Port.butter", portSource, null))
+                .byId("fluid.input");
+        require("fluid.insert,fluid.inspect".equals(port.attributes.get("capabilities")), "declared capabilities");
+        require("fluid".equals(port.attributes.get("tech.resource")), "namespaced attribute retained");
+        require("true".equals(port.attributes.get("enabled")), "runtime state remains authoritative");
+        String formatted = butter.compiler.ButterFormatter.format("Port.butter", portSource);
+        require(formatted.equals(butter.compiler.ButterFormatter.format("Port.butter", formatted)), "quoted attribute formatting");
+        require("input".equals(SemanticTree.of(ButterCompiler.compileSource("Port.butter", formatted, null))
+                .byId("fluid.input").attributes.get("tech.direction")), "formatted contract compiles");
         SemanticTree chrome = SemanticTree.of(ButterCompiler.compileSource("Chrome.butter",
                 "Column(children: [SearchBar(id: \"search\", placeholder: \"Search...\"),"
                         + " Tab(\"Name\", id: \"sort-name\"), Scrollbar(id: \"scroll\", value: 3, max: 10)])",

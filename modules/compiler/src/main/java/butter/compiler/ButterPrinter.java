@@ -90,7 +90,11 @@ final class ButterPrinter {
         if (named != null) {
             for (Map.Entry<String, ExprAst> entry : named.entrySet()) {
                 first = sep(first, block, indent);
-                out.append(entry.getKey()).append(": ");
+                String key = entry.getKey();
+                if (key.matches("[A-Za-z_][A-Za-z0-9_]*")
+                        && !java.util.Arrays.asList("true", "false", "null", "let", "public", "private", "component").contains(key)) out.append(key);
+                else quote(key);
+                out.append(": ");
                 expr(entry.getValue(), indent + 1);
             }
         }

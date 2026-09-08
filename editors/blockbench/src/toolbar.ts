@@ -15,10 +15,10 @@ export function toolbar() {
   PRESETS.forEach(p => { const o = element('option', '', p.label); o.value = p.id; presets.append(o) })
   presets.onchange = () => attempt(() => { if (presets.selectedIndex) call('begin', { preset: presets.value }); presets.selectedIndex = 0 })
   const exports = element('select'); exports.setAttribute('aria-label', 'Export GUI')
-  for (const [value, text] of [['', 'Export…'], ['document', 'Document JSON'], ['butter', '.butter source'], ['spec', 'GameUiSpec JSON'], ['semantics', 'Semantic tree JSON'], ['png', 'PNG image']]) {
+  for (const [value, text] of [['', 'Export…'], ['document', 'Document JSON'], ['butter', '.butter source'], ['bundle','Integration bundle ZIP'], ['spec', 'GameUiSpec JSON'], ['semantics', 'Semantic tree JSON'], ['png', 'PNG image']]) {
     const option = element('option', '', text); option.value = value; exports.append(option)
   }
-  exports.onchange = () => attempt(() => { if (exports.value) save(exports.value as 'document'); exports.value = '' })
+  exports.onchange = () => attempt(() => { const format=exports.value;exports.value='';if(format)return save(format as 'document') })
   const undo = iconButton('undo', 'Undo · Ctrl Z', () => call('history', { direction: 'undo' }))
   const redo = iconButton('redo', 'Redo · Ctrl Shift Z', () => call('history', { direction: 'redo' }))
   const gui = iconButton('web_asset', 'GUI canvas', () => call('view', { layout: 'gui' }), 'GUI')

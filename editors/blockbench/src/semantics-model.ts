@@ -10,9 +10,21 @@ function text(value: unknown, field: string, max: number, required = false): str
 }
 export function readSemanticConfig(node: Widget, value: unknown): SemanticConfig {
   if (!record(value)) throw new Error('Semantics must be an object')
-  const allowed = ['id', 'role', 'label', 'description', 'region', 'slot', 'tab_index', 'bindings', 'action']
+  const allowed = ['id', 'role', 'label', 'description', 'region', 'slot', 'tab_index', 'bindings', 'action', 'capabilities', 'attributes']
   for (const key of Object.keys(value)) if (!allowed.includes(key)) throw new Error(`Unknown semantics field: ${key}`)
   const result: SemanticConfig = { id: text(value.id, 'id', 100, true) }
+  if (value.capabilities !== undefined) {
+    if (!Array.isArray(value.capabilities) || value.capabilities.length>32 || value.capabilities.some(c=>typeof c!=='string'||c.length>100||!/^[a-z][a-z0-9_-]*(\.[a-z][a-z0-9_-]*)+$/.test(c))) throw Error('Capabilities require up to 32 namespaced identifiers')
+    result.capabilities=[...new Set(value.capabilities)]
+  }
+  if (value.attributes !== undefined) {
+    if(!record(value.attributes)||Object.keys(value.attributes).length>32)throw Error('Expected up to 32 semantic attributes')
+    result.attributes={}
+    for(const [key,v] of Object.entries(value.attributes)) {
+      if(key.length>100||!/^[a-z][a-z0-9_-]*(\.[a-z][a-z0-9_-]*)+$/.test(key))throw Error('Custom semantic attributes require a namespace')
+      result.attributes[key]=text(v,'attribute',200)
+    }
+  }
   if (value.role !== undefined) {
     if (typeof value.role !== 'string' || !SEMANTIC_ROLES[node.kind].includes(value.role)) throw new Error(`Role is incompatible with ${node.kind}`)
     result.role = value.role

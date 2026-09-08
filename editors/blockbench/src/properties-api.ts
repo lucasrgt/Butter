@@ -4,6 +4,7 @@ import { inheritedFlag } from './selection.ts'
 import { expectedRevision } from './editor-args.ts'
 import { freezePositions } from './position.ts'
 import { componentVariants, componentFields, previewFields, values } from './component-properties.ts'
+import { definition, resolvedComponent } from './library/document.ts'
 
 export function propertiesCall(args: Record<string, unknown>) {
   const store = current(), doc = store.snapshot(), id = args.id ?? store.selected
@@ -44,7 +45,8 @@ export function propertiesCall(args: Record<string, unknown>) {
     }
   }
   const result = store.snapshot()
-  return { widget_id: id, kind: node.kind, component: result.components?.[id] ?? {}, preview: values(previewFields(node.kind), result.preview?.[id]),
-    variants: componentVariants(node.kind), properties: componentFields(node.kind), preview_properties: previewFields(node.kind),
+  const def=definition(result,id),resolved=resolvedComponent(result,id)
+  return { widget_id: id, kind: node.kind, component: result.components?.[id] ?? {}, resolved_props:resolved.props,preview: values(previewFields(node.kind), resolved.preview),
+    variants: componentVariants(node.kind,def), properties: componentFields(node.kind,def), preview_properties: previewFields(node.kind),
     revision: store.revision, preview_only: true }
 }

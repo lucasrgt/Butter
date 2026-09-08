@@ -42,6 +42,10 @@ export const CAPABILITIES: Capability[] = [
   row('Library', 'Add components by click or drag onto canvas', 'Components palette', 'add with optional x / y'),
   row('Library', 'Search and filter component categories', 'Search; category selector; Ctrl+F', 'components, view.component_search / component_category'),
   row('Library', 'Browse grouped results, at most ten per page', 'Page buttons when results exceed ten', 'view.component_page'),
+  row('Library', 'Import declarative components, folders and packs', 'Components > Packs > Import JSON / ZIP / folder', 'library import / validate / schema'),
+  row('Library', 'Create, combine, export and manage pack versions', 'Components > Packs', 'library scaffold / combine / export / enable / remove / reload'),
+  row('Library', 'Use Tech Pack ports, storage and controls', 'Components > Packs > Install Tech Pack', 'library catalog; component add'),
+  row('Library', 'Upgrade a pinned component or convert to built-in', 'Properties > Component', 'component upgrade / detach; dry_run supported'),
   row('Navigation', 'Zoom around cursor without zooming the app', 'Ctrl + mouse wheel; 1x through 8x', 'view.zoom / pan_x / pan_y'),
   row('Navigation', 'Pan canvas', 'Space + drag; Center button', 'view.pan_x / pan_y'),
   row('Navigation', 'Frame selection / fit canvas / actual pixels', 'F / Shift+F or Ctrl+0 / Ctrl+1', 'frame, view.zoom'),
@@ -52,6 +56,7 @@ export const CAPABILITIES: Capability[] = [
   row('Files', 'Start a preset in current machine or a new project', 'New GUI; current project by default', 'begin, begin.new_project'),
   row('Files', 'Save GUI with machine in a Blockbench project', 'Native .bbmodel save / open', 'export format document, import'),
   row('Files', 'Import authoring JSON; export JSON / spec / Butter source / PNG', 'Document toolbar; Source toggle', 'import, export, preview'),
+  row('Files', 'Export pinned definitions, PNGs and integration contracts', 'Export > Integration bundle ZIP', 'file save format bundle'),
   row('Minecraft', 'Select compilation / preview version outside source', 'Version selector: Beta 1.7.3 available; others planned', 'versions target'),
   row('Minecraft', 'Load original local Beta font and GUI textures', 'JAR folder button; clear button', 'assets'),
   row('Validation', 'Inspect document, geometry, selection and history', 'Properties and status strip', 'inspect, tree'),
@@ -61,6 +66,7 @@ export const CAPABILITIES: Capability[] = [
   row('Semantics', 'Bind persistent container indices and search tab order', 'Semantics / Container slot / Tab order', 'semantics slot / tab_index'),
   row('Semantics', 'Declare typed backing state and click handlers', 'Semantics / Bindings and actions', 'semantics bindings / action'),
   row('Semantics', 'Export semantic declarations and validate structural contracts', 'Export / Semantic tree JSON', 'semantics validate, export semantics'),
+  row('Semantics', 'Declare capabilities and namespaced mod attributes', 'Semantics > Capabilities and custom attributes', 'semantics capabilities / attributes'),
   row('Help', 'Open complete command reference', '? key or toolbar help button; Edit / context menus', 'capabilities show_help'),
 ]
 let dialog: Dialog | undefined
@@ -77,6 +83,6 @@ export function showHelp() {
   dialog.show()
   return capabilities()
 }
-export function capabilities() { return { version: '0.6.0', capabilities: CAPABILITIES, clipboard: 'Internal Butter clipboard shared across project tabs',
+export function capabilities() { return { version: '0.9.0', capabilities: CAPABILITIES, clipboard: 'Internal Butter clipboard shared across project tabs',
   limits: ['Fixed 176 × 166 canvas and intrinsic Beta component dimensions', 'Only Beta 1.7.3 is implemented', 'Preview and Java runtime parity are not complete; see component audit'] } }
 export function disposeHelp() { dialog?.delete(); dialog = undefined }

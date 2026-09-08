@@ -9,6 +9,7 @@ import { alignmentControls } from './alignment-controls.ts'
 import { contextMenu } from './context-menu.ts'
 import { propertiesInspector } from './properties-inspector.ts'
 import { semanticsInspector } from './semantics-inspector.ts'
+import { definition } from './library/document.ts'
 
 export function renderInspector(root: HTMLElement) {
   root.replaceChildren()
@@ -18,7 +19,7 @@ export function renderInspector(root: HTMLElement) {
     return
   }
   const selected = nodes.length === 1 ? nodes[0] : undefined, screen = selected?.kind === 'screen'
-  root.append(element('h3', 'butter-title', selected ? TITLES[selected.kind] : `${ids.length} layers selected`))
+  root.append(element('h3', 'butter-title', selected ? definition(doc,selected.id)?.title??TITLES[selected.kind] : `${ids.length} layers selected`))
   let editable = false
   try { editableRoots(doc, ids); editable = true } catch {}
   if (selected) {

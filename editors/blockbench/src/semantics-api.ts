@@ -6,6 +6,7 @@ import { inheritedFlag } from './selection.ts'
 import { expectedRevision } from './editor-args.ts'
 import { semanticCatalog } from './semantics-catalog.ts'
 import { semanticTree } from './semantics-export.ts'
+import { resolvedSemantics } from './library/document.ts'
 
 export function semanticsCall(args: Record<string, unknown>) {
   const store = current(), doc = store.snapshot(), action = String(args.action ?? 'inspect')
@@ -38,6 +39,6 @@ export function semanticsCall(args: Record<string, unknown>) {
     }
     store.commit(doc, undefined, undefined, 'Edit semantics'); persist()
   } else if (action !== 'inspect') throw new Error('Unknown semantics action')
-  return { widget_id: id, kind: node.kind, layer_name: node.name, semantics: store.snapshot().semantics![id], catalog: semanticCatalog(node.kind),
+  return { widget_id: id, kind: node.kind, layer_name: node.name, semantics: resolvedSemantics(store.snapshot())[id], catalog: semanticCatalog(node.kind),
     revision: store.revision, compilerValidated: false, runtimeObserved: false }
 }

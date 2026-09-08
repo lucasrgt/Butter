@@ -1,15 +1,16 @@
 interface LocalFS {
-  statSync(path: string): { size: number }
+  statSync(path: string): { size: number; isDirectory(): boolean }
+  readdirSync(path:string,options:{withFileTypes:true}):Array<{name:string;isSymbolicLink():boolean}>
   readFileSync(path: string): Uint8Array
   writeFileSync(path: string, content: string | Uint8Array): void
 }
 let granted: LocalFS | undefined
 
-function filesystem(): LocalFS {
+export function filesystem(): LocalFS {
   if (granted) return granted
   const fs = requireNativeModule('fs', { message: 'Read your local Minecraft assets or save a Butter document.', optional: false })
   if (!fs) throw new Error('Local file access was not granted')
-  granted = fs as LocalFS
+  granted = fs as unknown as LocalFS
   return granted
 }
 

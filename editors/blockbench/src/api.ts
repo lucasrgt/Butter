@@ -1,4 +1,5 @@
 import { propertiesCall } from './properties-api.ts'
+import { libraryCall, customComponentCall } from './library/api.ts'
 import { PRESETS } from '../../gui-builder/src/model/presets.ts'
 import { PALETTE, type Kind } from '../../gui-builder/src/model/types.ts'
 import { exportPixels } from './export-pixels.ts'
@@ -12,7 +13,10 @@ import { layoutWarnings, readDocument } from './document.ts'
 import { add, requireNode } from './operations.ts'
 import { previewPng, referencePng } from './preview.ts'
 import { assetStatus } from './minecraft/assets.ts'
-import { CATEGORIES, componentPage } from './component-catalog.ts'
+import { componentCategories, componentPage, allComponents } from './component-catalog.ts'
+import { exportWarnings } from './library/bundle.ts'
+import { prepareImages } from './library/images.ts'
+import { showLibrary } from './library/manager.ts'
 import { viewState } from './view-state.ts'
 import { editorCall, editorCommands } from './editor-api.ts'
 import { requestedIds } from './editor-args.ts'
@@ -34,6 +38,8 @@ function integer(args: Args, key: string): number | undefined {
 }
 
 export function call(command: string, args: Args = {}): unknown {
+  if(command==='library')return args.action==='show'?showLibrary():libraryCall(args)
+  if(command==='component')return customComponentCall(args)
   if (command === 'properties') return propertiesCall(args)
   if (command === 'semantic_tree') return showSemanticTree()
   if (command === 'semantics') return semanticsCall(args)
@@ -42,11 +48,12 @@ export function call(command: string, args: Args = {}): unknown {
   if (extraCommands.includes(command)) return extraCall(command, args)
   if (command === 'components') {
     const view = viewState(), category = string(args, 'category', view.component_category)
+    const CATEGORIES=componentCategories()
     if (category !== 'all' && !CATEGORIES.some(item => item.id === category)) throw new Error('Unknown component category')
     const page = integer(args, 'page') ?? view.component_page
     if (page < 1) throw new Error('Page starts at 1')
     return { components: PALETTE, canvas: { width: 176, height: 166 },
-      catalog: componentPage(string(args, 'search', view.component_search), category, page), categories: CATEGORIES,
+      catalog: componentPage(string(args, 'search', view.component_search), category, page,allComponents(string(args,'pack',view.component_pack))), categories: CATEGORIES,
       preview: 'Original bitmap font and GUI textures when a local Beta 1.7.3 JAR is loaded; custom gauges are authoring representations.' }
   }
   if (command === 'begin') {
@@ -68,8 +75,11 @@ export function call(command: string, args: Args = {}): unknown {
   const store = current()
   if (command === 'inspect') return { ...store.inspect(), boxes: positionedBoxes(store.snapshot()) }
   if (command === 'preview') {
-    return { png: args.reference === 'furnace' ? referencePng() : previewPng(store.snapshot(), integer(args, 'scale') ?? 3),
-      warnings: layoutWarnings(store.snapshot()), renderer: assetStatus().loaded ? 'Minecraft bitmap assets; custom gauges are authoring representations' : 'Fallback authoring preview', assets: assetStatus() }
+    const doc=store.snapshot()
+    const render=()=>({ png: args.reference === 'furnace' ? referencePng() : previewPng(doc, integer(args, 'scale') ?? 3),
+      warnings: layoutWarnings(doc), renderer: assetStatus().loaded ? 'Minecraft bitmap assets; custom gauges are authoring representations' : 'Fallback authoring preview', assets: assetStatus() }
+    )
+    return Object.keys(doc.component_refs??{}).length?prepareImages(doc).then(render):render()
   }
   if (command === 'validate') {
     const doc = readDocument(store.snapshot())
@@ -79,7 +89,7 @@ export function call(command: string, args: Args = {}): unknown {
   if (command === 'export') {
     const doc = store.snapshot()
     const format = string(args, 'format', 'butter')
-    if (format === 'butter') return { format, text: exportPixels(doc) }
+    if (format === 'butter') return { format, text: exportPixels(doc),warnings:exportWarnings(doc) }
     if (format === 'document') return { format, text: JSON.stringify(doc, null, 2) }
     if (format === 'spec') return { format, text: JSON.stringify(semanticSpec(doc), null, 2) }
     if (format === 'semantics') return { format, text: JSON.stringify(semanticTree(doc), null, 2) }
@@ -96,7 +106,7 @@ export function call(command: string, args: Args = {}): unknown {
     let selection: string[] | undefined
     if (command === 'import') {
       const text = string(args, 'text')
-      if (text.length > 1_000_000) throw new Error('Document exceeds 1 MB')
+      if (text.length > 10*1024*1024) throw new Error('Document exceeds 10 MB')
       doc = readDocument(JSON.parse(text))
       selection = [doc.root.id]
     } else if (command === 'nudge' || command === 'position') {

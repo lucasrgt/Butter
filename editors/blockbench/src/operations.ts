@@ -2,6 +2,7 @@ import { createLeaf, findById, parentOf, removeById } from '../../gui-builder/sr
 import { GROUP_KINDS, type Kind, type Widget } from '../../gui-builder/src/model/types.ts'
 import type { ButterDocument } from './document.ts'
 import { freshSemanticId } from './semantics-slots.ts'
+import { prunePacks } from './library/document.ts'
 
 export function requireNode(doc: ButterDocument, id: string): Widget {
   const node = findById(doc.root, id)
@@ -58,7 +59,7 @@ export function duplicate(doc: ButterDocument, id: string) {
     while (ids.has(`b${counter}`)) counter++
     const id = `b${counter}`
     ids.add(id)
-    for (const map of [doc.components, doc.preview]) if (map?.[node.id]) map[id] = structuredClone(map[node.id]) as never
+    for (const map of [doc.components, doc.preview, doc.component_refs]) if (map?.[node.id]) map[id] = structuredClone(map[node.id]) as never
     if (doc.positions?.[node.id]) doc.positions[id] = { ...doc.positions[node.id] }
     if (doc.semantics?.[node.id]) {
       const semantic = structuredClone(doc.semantics[node.id]); semantic.id = freshSemanticId(semantic.id, semanticIds)
@@ -80,7 +81,8 @@ export function remove(doc: ButterDocument, id: string) {
   if (doc.positions) {
     for (const key of Object.keys(doc.positions)) if (!findById(doc.root, key)) delete doc.positions[key]
   }
-  for (const map of [doc.components, doc.preview]) for (const key of Object.keys(map ?? {})) if (!findById(doc.root, key)) delete map![key]
+  for (const map of [doc.components, doc.preview, doc.component_refs]) for (const key of Object.keys(map ?? {})) if (!findById(doc.root, key)) delete map![key]
+  prunePacks(doc)
   for (const key of Object.keys(doc.semantics ?? {})) if (!findById(doc.root, key)) delete doc.semantics![key]
 }
 

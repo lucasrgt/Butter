@@ -5,9 +5,11 @@ import { current } from './host.ts'
 import { inheritedFlag } from './selection.ts'
 import { semanticCatalog, type SemanticConfig } from './semantics-catalog.ts'
 import type { Widget } from '../../gui-builder/src/model/types.ts'
+import { resolvedSemantics, definition } from './library/document.ts'
+import { semanticFields } from './library/semantic-fields.ts'
 
 export function semanticsInspector(node: Widget) {
-  const store = current(), doc = store.snapshot(), config = doc.semantics![node.id], catalog = semanticCatalog(node.kind)
+  const store = current(), doc = store.snapshot(), config = resolvedSemantics(doc)[node.id], catalog = semanticCatalog(node.kind)
   const root = element('section', 'butter-semantics'), locked = inheritedFlag(doc, node.id, 'locked')
   const heading = element('div', 'butter-semantics-heading')
   heading.append(element('h3', 'butter-title', 'Semantics'), button('Tree', () => call('semantic_tree')))
@@ -47,6 +49,7 @@ export function semanticsInspector(node: Widget) {
   details.append(summary)
   for (const { field, type } of catalog.bindings) {
     const input = element('input'); input.value = config.bindings?.[field] ?? ''; input.placeholder = `${type} backing symbol`
+    input.placeholder=definition(doc,node.id)?.binding_hints?.[field]??input.placeholder
     input.maxLength = 120; input.disabled = locked; input.setAttribute('aria-label', `Binding ${field}`)
     input.title = `Java ${type} field, signal or getter. Evaluated by the runtime.`
     input.onchange = () => attempt(() => update({ bindings: { [field]: input.value || null } }))
@@ -59,5 +62,6 @@ export function semanticsInspector(node: Widget) {
   }
   details.append(element('p', 'butter-asset-status', catalog.actions.length ? `Actions: ${catalog.actions.join(', ')}` : 'Read-only semantic node'))
   root.append(details)
+  root.append(semanticFields(config,locked,update))
   return root
 }

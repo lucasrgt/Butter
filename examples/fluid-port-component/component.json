@@ -1,0 +1,155 @@
+{
+  "schema": "butter.component.v1",
+  "id": "fluid-port",
+  "title": "Fluid port",
+  "category": {
+    "id": "ports",
+    "title": "Ports"
+  },
+  "base": "slot",
+  "variants": [
+    {
+      "id": "input",
+      "title": "Input",
+      "w": 22,
+      "h": 22,
+      "base_variant": "normal",
+      "props": {
+        "accent": "#479cff"
+      },
+      "semantics": {
+        "capabilities": [
+          "fluid.insert"
+        ],
+        "attributes": {
+          "tech.resource": "fluid",
+          "tech.direction": "input",
+          "tech.contract": "v1"
+        }
+      },
+      "base_bounds": [
+        2,
+        2,
+        18,
+        18
+      ]
+    },
+    {
+      "id": "output",
+      "title": "Output",
+      "w": 22,
+      "h": 22,
+      "base_variant": "normal",
+      "props": {
+        "accent": "#e6a64b"
+      },
+      "semantics": {
+        "capabilities": [
+          "fluid.extract"
+        ],
+        "attributes": {
+          "tech.resource": "fluid",
+          "tech.direction": "output",
+          "tech.contract": "v1"
+        }
+      },
+      "base_bounds": [
+        2,
+        2,
+        18,
+        18
+      ]
+    },
+    {
+      "id": "bidirectional",
+      "title": "Bidirectional",
+      "w": 22,
+      "h": 22,
+      "base_variant": "normal",
+      "props": {
+        "accent": "#479cff"
+      },
+      "semantics": {
+        "capabilities": [
+          "fluid.insert",
+          "fluid.extract"
+        ],
+        "attributes": {
+          "tech.resource": "fluid",
+          "tech.direction": "bidirectional",
+          "tech.contract": "v1"
+        }
+      },
+      "base_bounds": [
+        2,
+        2,
+        18,
+        18
+      ]
+    }
+  ],
+  "description": "Container slot with a fluid transfer contract and an outer port outline.",
+  "icon": "opacity",
+  "tags": [
+    "fluid",
+    "port",
+    "input",
+    "output"
+  ],
+  "fields": [
+    {
+      "key": "accent",
+      "label": "Outline color",
+      "type": "color",
+      "default": "#479cff"
+    },
+    {
+      "key": "marked",
+      "label": "Show port marker",
+      "type": "boolean",
+      "default": true
+    }
+  ],
+  "draw_base": true,
+  "layers": [
+    {
+      "type": "outline",
+      "x": 0,
+      "y": 0,
+      "w": 22,
+      "h": 22,
+      "color": "$accent",
+      "thickness": 1
+    },
+    {
+      "type": "image",
+      "x": 16,
+      "y": 16,
+      "w": 6,
+      "h": 6,
+      "asset": "port-mark.png",
+      "frames": 1,
+      "crop": [
+        0,
+        0,
+        6,
+        6
+      ],
+      "frame_ms": 100,
+      "when": {
+        "field": "marked",
+        "equals": true
+      }
+    }
+  ],
+  "binding_hints": {
+    "item": "fluidPortItem",
+    "count": "fluidPortCount",
+    "enabled": "fluidPortEnabled"
+  },
+  "version": "1.0.0",
+  "assets": {
+    "port-mark.png": "images/port-mark.png"
+  },
+  "$schema": "component.schema.json"
+}

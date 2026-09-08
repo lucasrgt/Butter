@@ -1,4 +1,5 @@
 import { componentSize } from './component-properties.ts'
+import { definition } from './library/document.ts'
 import { pack } from '../../gui-builder/src/model/pack.ts'
 import { findById } from '../../gui-builder/src/model/tree.ts'
 import type { Box } from '../../gui-builder/src/model/types.ts'
@@ -8,7 +9,7 @@ export function positionedBoxes(doc: ButterDocument): Box[] {
   const order: string[] = []
   const visit = (node: typeof doc.root) => { order.push(node.id); node.children.forEach(visit) }
   visit(doc.root)
-  const sizes = Object.fromEntries([...order].map(id => [id, componentSize(findById(doc.root, id)!.kind, doc.components?.[id])]).filter(([, size]) => size))
+  const sizes = Object.fromEntries([...order].map(id => [id, componentSize(findById(doc.root, id)!.kind, doc.components?.[id],definition(doc,id))]).filter(([, size]) => size))
   return pack(doc.root, sizes).map(box => ({ ...box, ...doc.positions?.[box.id] }))
     .sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id))
 }

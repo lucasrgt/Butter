@@ -30,3 +30,11 @@ chrome atoms are listed in `docs/LIBRARY.md`.
 `.butter` files never embed arbitrary Java. Complex logic lives in the
 backing class. One file exposes exactly one `public component`; `private`
 components and `let` bindings may share that file.
+
+## Version-independent editor source
+
+The Blockbench editor stores a GUI tree and optional leaf pixel positions.
+It exports version-independent `.butter` source through a positioned Stack.
+Its separate target profile selects an adapter for compilation/preview; the
+source does not embed Minecraft version checks. Beta 1.7.3 is the first profile;
+1.7.10, 1.12.2 and modern adapters remain planned, not silently emulated.

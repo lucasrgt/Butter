@@ -23,7 +23,7 @@ interface Measured {
 }
 
 /** Places leaves on the 176x166 panel. row/column flatten; energy/tank hug the left. */
-export function pack(root: Widget): Box[] {
+export function pack(root: Widget, sizes: Record<string, { w: number; h: number }> = {}): Box[] {
   const boxes: Box[] = []
   const player = root.children.find((child) => child.kind === 'player')
   const sides = root.children.filter((child) => child.kind === 'energy' || child.kind === 'tank')
@@ -33,14 +33,14 @@ export function pack(root: Widget): Box[] {
   let railX = 10
   const railY = CONTENT_Y
   for (const side of sides) {
-    const measured = measure(side)
+    const measured = measure(side, sizes)
     place(measured, railX, railY, boxes)
     railX += measured.w + RAIL_GAP
   }
   if (mains.length > 0) {
     const column: Measured = {
       widget: { id: root.id, kind: 'column', name: root.name, children: mains },
-      children: mains.map(measure),
+      children: mains.map(node => measure(node, sizes)),
       w: 0,
       h: 0,
     }
@@ -68,12 +68,12 @@ export function pack(root: Widget): Box[] {
   return boxes
 }
 
-function measure(widget: Widget): Measured {
+function measure(widget: Widget, sizes: Record<string, { w: number; h: number }>): Measured {
   if (!GROUP_KINDS.has(widget.kind)) {
-    const size = LEAF_SIZE[widget.kind as Exclude<Kind, 'screen' | 'row' | 'column'>]
+    const size = sizes[widget.id] ?? LEAF_SIZE[widget.kind as Exclude<Kind, 'screen' | 'row' | 'column'>]
     return { widget, w: size.w, h: size.h, children: [] }
   }
-  const children = widget.children.filter((child) => child.kind !== 'player').map(measure)
+  const children = widget.children.filter((child) => child.kind !== 'player').map(node => measure(node, sizes))
   if (children.length === 0) return { widget, w: 0, h: 0, children }
   if (widget.kind === 'row') {
     return {

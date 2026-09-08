@@ -1,6 +1,16 @@
 import type { Kind, Widget } from './types.ts'
 
 const TYPE: Record<Exclude<Kind, 'screen'>, string> = {
+  gas: 'GasTank',
+  flame: 'Flame',
+  button: 'Button',
+  slider: 'Slider',
+  checkbox: 'Checkbox',
+  toggle: 'Toggle',
+  radio: 'Radio',
+  scrollbar: 'Scrollbar',
+  tab: 'Tab',
+  separator: 'Separator',
   row: 'Row',
   column: 'Column',
   slot: 'Slot',

@@ -70,6 +70,15 @@ public final class LayoutEngineTest {
                 Collections.singletonMap("class", (Object) "h-full w-20"),
                 Collections.<WidgetSpec>emptyList()), BoxConstraints.loose(80, 40));
         require(full.bounds.height == 40, "h-full panel");
+        WidgetSpec pixelChild = text.withProp("x", 31).withProp("y", 17);
+        WidgetSpec stack = new WidgetSpec("Stack", null, Collections.emptyList(),
+                Collections.<String, Object>singletonMap("class", "p-4"), Collections.singletonList(pixelChild));
+        LayoutNode pixel = LayoutEngine.layout(stack, BoxConstraints.loose(176, 166));
+        require(pixel.children.get(0).bounds.x == 35 && pixel.children.get(0).bounds.y == 21, "pixel coordinates plus padding");
+        require(pixel.bounds.width == 31 + pixel.children.get(0).bounds.width + 8, "stack measures positioned child");
+        LayoutNode negative = LayoutEngine.layout(stack.withChildren(Collections.singletonList(pixelChild.withProp("x", -4))),
+                BoxConstraints.loose(176, 166));
+        require(negative.children.get(0).bounds.x == 0, "negative pixel offsets");
         System.out.println("  layout: column packing");
     }
 

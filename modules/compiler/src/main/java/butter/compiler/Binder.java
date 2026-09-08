@@ -145,7 +145,9 @@ final class Binder {
             }
         }
         SemanticsProps.literals(props);
-        checkBindings(component, props);
+        PixelProps.check(ast.name, props, children, component, errors);
+        SemanticChecks.check(ast.name, props, errors);
+        BindingChecks.check(ast.name, props, contracts, errors);
         String key = props.get("key") instanceof String ? (String) props.get("key") : null;
         return new WidgetSpec(ast.name, key, arguments, props, children);
     }
@@ -159,22 +161,6 @@ final class Binder {
             if (items.get(index) instanceof WidgetSpec) children.add((WidgetSpec) items.get(index));
         }
         return children;
-    }
-
-    private void checkBindings(String component, Map<String, Object> props) {
-        Object action = props.get("action");
-        if (action instanceof Binding) {
-            Binding binding = (Binding) action;
-            if (contracts.template != null && !contracts.template.isEmpty() && !contracts.action(binding.path())) {
-                errors.add(new Diagnostic("B1401", "Missing action", component, "action", "@ButterAction",
-                        binding.path(), 0, 0));
-            }
-        }
-        Object enabled = props.get("enabled");
-        if (enabled instanceof Binding && !contracts.has(((Binding) enabled).path()) && !contracts.template.isEmpty()) {
-            errors.add(new Diagnostic("B1402", "Missing backing symbol", component, "enabled", "boolean",
-                    ((Binding) enabled).path(), 0, 0));
-        }
     }
 
     private void checkType(String component, ParamAst param, Object value) {

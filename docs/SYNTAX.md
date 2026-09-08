@@ -36,3 +36,24 @@ Vanilla chrome atoms are in `docs/LIBRARY.md`.
 `butter format` reprints a parsed file with two-space indent. Editor
 highlighting is a TextMate grammar: Cursor and VS Code use `editors/vscode`,
 IntelliJ uses `editors/Butter.tmbundle`. See `editors/README.md`.
+
+## Explicit pixel layout
+
+A `Stack` may position direct children using integer `x` and `y` offsets from
+its padded content origin. Omitted axes retain Stack alignment. Coordinates
+must be in [-32768, 32768]; strings and fractional values fail with B1204.
+Positioned children of other containers also fail rather than silently using
+flow layout. Width and height still use normal utilities.
+
+```text
+public component CrusherControl() {
+  Stack(class: "w-176 h-166", children: [
+    Slot(0, id: "input", x: 54, y: 33, class: "w-18 h-18"),
+    ProgressBar(id: "craft", x: 79, y: 34, class: "w-24 h-17"),
+    Slot(1, id: "output", x: 115, y: 33, class: "w-18 h-18")
+  ])
+}
+```
+
+Minecraft version selection belongs to build/adapter configuration, outside
+`.butter` source. A template does not change merely because its target changes.

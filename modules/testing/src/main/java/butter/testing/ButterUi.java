@@ -24,15 +24,21 @@ public final class ButterUi implements HostUi {
 
     public Handle getById(String id) { return new Handle(runtime, runtime.node(id), id); }
 
-    public String screen() { return screen; }
+    public String screen() { return HostUiExport.screen(screen, runtime.semantics()); }
 
-    public List<HostUiNode> nodes() { return HostUiExport.flatten(screen, runtime.semantics()); }
+    public List<HostUiNode> nodes() { return HostUiExport.flatten(screen(), runtime.semantics()); }
 
     public void click(String name) { runtime.click(name); }
 
     public void type(char ch) { runtime.type(ch); }
 
     public void backspace() { runtime.backspace(); }
+
+    public void press(String key) {
+        if ("TAB".equals(key) || "SHIFT_TAB".equals(key)) runtime.focusNext("SHIFT_TAB".equals(key));
+        else if ("BACKSPACE".equals(key)) runtime.backspace();
+        else throw new IllegalArgumentException("unsupported key " + key);
+    }
 
     public void setValue(String name, int value) { runtime.setValue(name, value); }
 

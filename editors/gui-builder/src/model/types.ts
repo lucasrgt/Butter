@@ -14,6 +14,16 @@ export type Kind =
   | 'tank'
   | 'search'
   | 'player'
+  | 'gas'
+  | 'flame'
+  | 'button'
+  | 'slider'
+  | 'checkbox'
+  | 'toggle'
+  | 'radio'
+  | 'scrollbar'
+  | 'tab'
+  | 'separator'
 
 export interface Widget {
   id: string
@@ -44,6 +54,16 @@ export interface Box {
 }
 
 export const LEAF_SIZE: Record<Exclude<Kind, 'screen' | 'row' | 'column'>, { w: number; h: number }> = {
+  gas: { w: 18, h: 54 },
+  flame: { w: 14, h: 14 },
+  button: { w: 60, h: 20 },
+  slider: { w: 88, h: 12 },
+  checkbox: { w: 9, h: 9 },
+  toggle: { w: 18, h: 9 },
+  radio: { w: 9, h: 9 },
+  scrollbar: { w: 6, h: 54 },
+  tab: { w: 28, h: 20 },
+  separator: { w: 88, h: 2 },
   slot: { w: 18, h: 18 },
   progress: { w: 24, h: 17 },
   energy: { w: 8, h: 54 },
@@ -55,10 +75,21 @@ export const LEAF_SIZE: Record<Exclude<Kind, 'screen' | 'row' | 'column'>, { w: 
 export const GROUP_KINDS: ReadonlySet<Kind> = new Set(['screen', 'row', 'column'])
 
 export const PALETTE: readonly Kind[] = [
+  'gas', 'flame', 'button', 'slider', 'checkbox', 'toggle', 'radio', 'scrollbar', 'tab', 'separator',
   'row', 'column', 'slot', 'progress', 'energy', 'tank', 'search', 'player',
 ]
 
 export const DEFAULT_NAME: Record<Kind, string> = {
+  gas: 'gas',
+  flame: 'flame',
+  button: 'button',
+  slider: 'slider',
+  checkbox: 'checkbox',
+  toggle: 'toggle',
+  radio: 'radio',
+  scrollbar: 'scrollbar',
+  tab: 'tab',
+  separator: 'separator',
   screen: 'screen',
   row: 'row',
   column: 'column',

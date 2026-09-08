@@ -52,3 +52,9 @@ On macOS and Linux, replace `;` with `:`.
 `butter format` parses then reprints. Invalid files fail closed. Comments are
 trivia in the lexer today and are not preserved. Canonical layout is two-space
 indent, named arguments after positional, no trailing commas.
+# Blockbench integration
+
+The [Blockbench Butter plugin](blockbench/README.md) embeds the existing GUI
+builder's components, layers, inspector and preview in native Blockbench panels.
+It also connects to `butter_*` tools in Blockbench Pixel Harness's existing MCP
+server. See that guide for build, installation and the authoring-preview boundary.

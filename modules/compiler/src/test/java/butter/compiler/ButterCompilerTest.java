@@ -16,6 +16,18 @@ public final class ButterCompilerTest {
         require(tree.type().equals("Column") && tree.children().size() == 2, "column children");
         require(tree.children().get(0).type().equals("Text"), "text");
         require("craft".equals(tree.children().get(1).id()), "button id");
+        WidgetSpec positioned = ButterCompiler.compileSource("Pixels.butter",
+                "Stack(children: [Slot(0, id: \"input\", x: 31, y: -4)])", null);
+        require(((Number) positioned.children().get(0).prop("x")).intValue() == 31, "pixel coordinate retained");
+        for (String invalid : new String[] { "Stack(children: [Slot(x: 1.5)])", "Stack(children: [Slot(x: \"4\")])",
+                "Stack(children: [Slot(y: 32769)])", "Column(children: [Slot(x: 4)])" }) {
+            try {
+                ButterCompiler.compileSource("InvalidPixels.butter", invalid, null);
+                throw new IllegalStateException("invalid pixel coordinates must fail");
+            } catch (ButterCompileException error) {
+                require(error.getMessage().contains("B1204"), "pixel coordinate diagnostic");
+            }
+        }
         try {
             ButterCompiler.compileSource("Bad.butter", "Text(\"x\", class: \"nope\")", null);
             throw new IllegalStateException("unknown utility must fail");

@@ -43,14 +43,20 @@ public final class HostUiCycle {
         Path out = build.resolve("hostui");
         recreate(out);
         List<Path> none = Collections.emptyList();
-        Path api = compile(worldline.resolve("modules/api/src/main/java"), out.resolve("api"), none);
-        Path kernel = compile(worldline.resolve("modules/kernel/src/main/java"),
-                out.resolve("kernel"), Arrays.asList(api));
-        Path reproduction = compile(worldline.resolve("modules/reproduction/src/main/java"),
-                out.resolve("reproduction"), Arrays.asList(api));
+        Properties worldlineConfig = new Properties();
+        try (java.io.Reader reader = Files.newBufferedReader(worldline.resolve("harness.properties"), StandardCharsets.UTF_8)) {
+            worldlineConfig.load(reader);
+        }
+        List<Path> worldlineModules = new ArrayList<Path>();
+        for (String module : required(worldlineConfig, "modules").split(",")) {
+            worldlineModules.add(compile(worldline.resolve("modules/" + module.trim() + "/src/main/java"),
+                    out.resolve(module.trim()), worldlineModules, worldlineConfig.getProperty(
+                            "module." + module.trim() + ".release", required(worldlineConfig, "java.release"))));
+        }
         Path headless = compile(worldline.resolve("adapters/b173-client/headless-src"),
                 out.resolve("headless"), none);
-        List<Path> adapterPath = new ArrayList<Path>(Arrays.asList(headless, mapped, api, kernel, reproduction));
+        List<Path> adapterPath = new ArrayList<Path>(Arrays.asList(headless, mapped));
+        adapterPath.addAll(worldlineModules);
         adapterPath.addAll(jars(workspace.resolve("libraries")));
         Path adapter = compile(worldline.resolve("adapters/b173-client/src/main/java"),
                 out.resolve("adapter"), adapterPath);
@@ -61,7 +67,8 @@ public final class HostUiCycle {
             Path classes = build.resolve("classes").resolve(module.trim());
             if (Files.isDirectory(classes)) smokePath.add(classes);
         }
-        smokePath.addAll(Arrays.asList(adapter, api, kernel, mapped));
+        smokePath.addAll(Arrays.asList(adapter, mapped));
+        smokePath.addAll(worldlineModules);
         smokePath.addAll(jars(workspace.resolve("libraries")));
         Path classes = compile(root.resolve("smokes/hostui-live/src"), out.resolve("classes"), smokePath);
         List<Path> runtime = new ArrayList<Path>(smokePath);
@@ -80,9 +87,13 @@ public final class HostUiCycle {
     }
 
     private Path compile(Path source, Path output, List<Path> classpath) throws Exception {
+        return compile(source, output, classpath, "8");
+    }
+
+    private Path compile(Path source, Path output, List<Path> classpath, String release) throws Exception {
         Files.createDirectories(output);
         List<String> command = new ArrayList<String>(Arrays.asList(
-                "javac", "-encoding", "UTF-8", "--release", "8",
+                "javac", "-encoding", "UTF-8", "--release", release,
                 "-Xlint:all,-options", "-Werror", "-d", output.toString()));
         if (!classpath.isEmpty()) {
             command.add("-classpath");
@@ -91,7 +102,13 @@ public final class HostUiCycle {
         List<Path> sources = javaFiles(source);
         require(!sources.isEmpty(), "no Java sources in " + source);
         for (Path path : sources) command.add(path.toString());
-        run(command);
+        Path args = output.resolve("javac.args");
+        List<String> quoted = new ArrayList<String>();
+        for (String item : command.subList(1, command.size())) {
+            quoted.add("\"" + item.replace('\\', '/').replace("\"", "\\\"") + "\"");
+        }
+        Files.write(args, quoted, StandardCharsets.UTF_8);
+        run(Arrays.asList("javac", "@" + args));
         return output;
     }
 

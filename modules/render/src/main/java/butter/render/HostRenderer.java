@@ -37,6 +37,7 @@ public final class HostRenderer {
     public void paint(LayoutNode node, HostCanvas canvas) { paint(node, canvas, 0, 0); }
 
     private void paint(LayoutNode node, HostCanvas canvas, int ox, int oy) {
+        if (Boolean.FALSE.equals(node.widget.prop("visible"))) return;
         Rect box = node.bounds;
         int x = ox + box.x;
         int y = oy + box.y;

@@ -59,7 +59,7 @@ function builderType(kind: Widget['kind'], name: string): string {
   if (kind === 'energy') return 'energy_bar'
   if (kind === 'tank') return name.includes('gas') ? 'gas_tank' : 'fluid_tank'
   if (kind === 'search') return 'search_box'
-  throw new Error(`unsupported builder component: ${kind}`)
+  return kind
 }
 
 export function roleOf(type: string): string {
@@ -67,6 +67,8 @@ export function roleOf(type: string): string {
   if (type.includes('tank')) return 'tank'
   if (type.startsWith('search_box')) return 'search'
   if (type.startsWith('scrollbar')) return 'scroll'
+  if (['button', 'slider', 'checkbox', 'toggle', 'radio', 'tab', 'separator'].includes(type)) return type
+  if (type === 'gas') return 'tank'
   throw new Error(`unsupported builder component: ${type}`)
 }
 

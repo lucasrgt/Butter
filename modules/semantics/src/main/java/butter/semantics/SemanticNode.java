@@ -7,6 +7,8 @@ import butter.core.WidgetSpec;
 
 /** One semantic node. Butter owns this metadata; Worldline only consumes it. */
 public final class SemanticNode {
+    public final int index;
+    public final Map<String, String> attributes;
     public final String id;
     public final String role;
     public final String label;
@@ -25,6 +27,15 @@ public final class SemanticNode {
 
     public SemanticNode(String id, String role, String label, String type, Object value, int itemId,
             boolean enabled, boolean focused, List<String> actions, List<SemanticNode> children) {
+        this(id, role, label, type, value, itemId, enabled, focused, actions, children, -1,
+                Collections.<String, String>emptyMap());
+    }
+
+    private SemanticNode(String id, String role, String label, String type, Object value, int itemId,
+            boolean enabled, boolean focused, List<String> actions, List<SemanticNode> children,
+            int index, Map<String, String> attributes) {
+        this.index = index;
+        this.attributes = Collections.unmodifiableMap(new java.util.LinkedHashMap<String, String>(attributes));
         this.id = id;
         this.role = role;
         this.label = label;
@@ -61,10 +72,16 @@ public final class SemanticNode {
             actions.add("set_value");
         }
         if ("Slot".equals(spec.type())) { actions.add("click"); actions.add("right_click"); }
+        if ("SearchBar".equals(spec.type())) {
+            actions.add("focus"); actions.add("tab");
+            if (!Boolean.TRUE.equals(spec.prop("readOnly"))) { actions.add("type"); actions.add("backspace"); }
+        }
+        if (!butter.core.SemanticProperties.interactive(spec)) actions.clear();
         Object value = spec.prop("value");
         if ("slot".equals(role) && spec.prop("count") != null) value = spec.prop("count");
         return new SemanticNode(id, role, label, spec.type(), value, number(spec.prop("item"), -1),
-                enabled, focused, actions, children);
+                enabled, focused, actions, children, number(spec.prop("container_index"), -1),
+                SemanticAttributes.from(spec, id, label));
     }
 
     private static int number(Object value, int fallback) {

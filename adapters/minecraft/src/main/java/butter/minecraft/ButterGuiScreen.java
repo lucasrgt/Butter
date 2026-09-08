@@ -60,6 +60,8 @@ public final class ButterGuiScreen extends GuiScreen implements HostUi {
             super.keyTyped(typed, key);
             return;
         }
+        if (key == 15 && runtime.focusNext(org.lwjgl.input.Keyboard.isKeyDown(42)
+                || org.lwjgl.input.Keyboard.isKeyDown(54))) return;
         if (key == 14 && runtime.backspace()) return;
         if (typed >= 32 && typed < 127 && runtime.type(typed)) return;
         super.keyTyped(typed, key);
@@ -67,10 +69,10 @@ public final class ButterGuiScreen extends GuiScreen implements HostUi {
 
     public boolean doesGuiPauseGame() { return false; }
 
-    public String screen() { return screenId; }
+    public String screen() { return HostUiExport.screen(screenId, runtime.semantics()); }
 
     public List<HostUiNode> nodes() {
-        List<HostUiNode> nodes = HostUiExport.flatten(screenId, runtime.semantics());
+        List<HostUiNode> nodes = HostUiExport.flatten(screen(), runtime.semantics());
         return MinecraftInventory.bind(this.mc == null ? null : this.mc.thePlayer, runtime.tree(), nodes);
     }
 
@@ -82,6 +84,12 @@ public final class ButterGuiScreen extends GuiScreen implements HostUi {
     public void type(char ch) { runtime.type(ch); }
 
     public void backspace() { runtime.backspace(); }
+
+    public void press(String key) {
+        if ("TAB".equals(key) || "SHIFT_TAB".equals(key)) runtime.focusNext("SHIFT_TAB".equals(key));
+        else if ("BACKSPACE".equals(key)) runtime.backspace();
+        else throw new IllegalArgumentException("unsupported key " + key);
+    }
 
     public void setValue(String name, int value) { runtime.setValue(name, value); }
 

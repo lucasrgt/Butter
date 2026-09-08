@@ -30,6 +30,7 @@ public final class HitTest {
     public static Hit at(LayoutNode node, int x, int y) { return at(node, x, y, 0, 0); }
 
     private static Hit at(LayoutNode node, int x, int y, int originX, int originY) {
+        if (!butter.core.SemanticProperties.interactive(node.widget)) return null;
         int left = originX + node.bounds.x;
         int top = originY + node.bounds.y;
         java.util.List<LayoutNode> children = node.children;
@@ -38,6 +39,7 @@ public final class HitTest {
             if (hit != null) return hit;
         }
         if (x < left || y < top || x >= left + node.bounds.width || y >= top + node.bounds.height) return null;
+        if (!butter.core.SemanticProperties.acceptsPointer(node.widget)) return null;
         String id = node.widget.id();
         if (id == null || id.isEmpty()) return null;
         return new Hit(id, x - left, y - top, node.bounds.width, node.bounds.height);

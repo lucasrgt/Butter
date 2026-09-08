@@ -30,6 +30,17 @@ final class ChromeHost {
         return "Scrollbar".equals(spec.type());
     }
 
+    boolean focusNext(WidgetSpec tree, boolean reverse) {
+        List<WidgetSpec> order = WidgetState.focusOrder(tree);
+        if (order.isEmpty()) return false;
+        int current = -1;
+        for (int i = 0; i < order.size(); i++) if (order.get(i).id().equals(focused)) current = i;
+        int next = current < 0 ? (reverse ? order.size() - 1 : 0)
+                : (current + (reverse ? -1 : 1) + order.size()) % order.size();
+        focused = order.get(next).id();
+        return true;
+    }
+
     boolean type(char ch, WidgetSpec template, WidgetSpec resolved, Resolver resolver) {
         return edit(false, ch, template, resolved, resolver);
     }
@@ -57,7 +68,8 @@ final class ChromeHost {
     private boolean edit(boolean delete, char ch, WidgetSpec template, WidgetSpec resolved, Resolver resolver) {
         if (focused == null) return false;
         WidgetSpec spec = ButterRuntime.find(resolved, focused);
-        if (spec == null || !"SearchBar".equals(spec.type())) return false;
+        if (spec == null || !"SearchBar".equals(spec.type()) || !butter.core.SemanticProperties.interactive(spec)
+                || Boolean.TRUE.equals(spec.prop("readOnly"))) return false;
         String current = queries.containsKey(focused) ? queries.get(focused) : text(spec.prop("value"));
         String next = delete ? (current.isEmpty() ? "" : current.substring(0, current.length() - 1))
                 : current + ch;

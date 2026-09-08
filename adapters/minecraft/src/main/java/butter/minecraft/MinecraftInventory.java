@@ -32,6 +32,7 @@ final class MinecraftInventory {
     }
 
     private static boolean use(EntityPlayer player, WidgetSpec tree, String id, boolean right) {
+        if (!inputAllowed(tree, id)) throw new IllegalStateException("widget is disabled or hidden");
         Integer slot = inventoryIndex(tree, id);
         if (player == null || player.inventory == null || slot == null) return false;
         if (right) MinecraftStacks.right(player, slot.intValue());
@@ -45,6 +46,7 @@ final class MinecraftInventory {
     }
 
     private static void walk(ButterGuiScreen screen, EntityPlayer player, LayoutNode node, int ox, int oy) {
+        if (Boolean.FALSE.equals(node.widget.prop("visible"))) return;
         int x = ox + node.bounds.x;
         int y = oy + node.bounds.y;
         if ("Slot".equals(node.widget.type()) && node.widget.prop("index") instanceof Number) {
@@ -66,12 +68,19 @@ final class MinecraftInventory {
         ItemStack stack = main[index];
         int itemId = stack == null ? -1 : stack.itemID;
         int count = stack == null ? 0 : stack.stackSize;
-        return new HostUiNode(node.role(), node.name(), node.index(), itemId, count,
-                node.label(), node.enabled(), node.focused());
+        return node.withStack(itemId, count);
+    }
+
+    private static boolean inputAllowed(WidgetSpec spec, String id) {
+        if (id != null && (id.equals(spec.id()) || id.equals(butter.core.SemanticProperties.id(spec)))) {
+            return butter.core.SemanticProperties.interactive(spec);
+        }
+        for (WidgetSpec child : spec.children()) if (!inputAllowed(child, id)) return false;
+        return true;
     }
 
     private static Integer inventoryIndex(WidgetSpec spec, String id) {
-        if (id != null && id.equals(spec.id()) && "Slot".equals(spec.type())
+        if (id != null && (id.equals(spec.id()) || id.equals(butter.core.SemanticProperties.id(spec))) && "Slot".equals(spec.type())
                 && spec.prop("index") instanceof Number) {
             return Integer.valueOf(((Number) spec.prop("index")).intValue());
         }

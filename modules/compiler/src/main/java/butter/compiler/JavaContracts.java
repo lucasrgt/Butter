@@ -9,18 +9,20 @@ import butter.annotations.ButterAction;
 import butter.annotations.ButterComponent;
 
 final class JavaContracts {
+    final Class<?> backing;
     final String template;
     final Map<String, String> symbols;
     final Map<String, Method> actions;
 
-    private JavaContracts(String template, Map<String, String> symbols, Map<String, Method> actions) {
+    private JavaContracts(Class<?> backing, String template, Map<String, String> symbols, Map<String, Method> actions) {
+        this.backing = backing;
         this.template = template;
         this.symbols = symbols;
         this.actions = actions;
     }
 
     static JavaContracts inspect(Class<?> type) {
-        if (type == null) return new JavaContracts("", Collections.<String, String>emptyMap(),
+        if (type == null) return new JavaContracts(null, "", Collections.<String, String>emptyMap(),
                 Collections.<String, Method>emptyMap());
         ButterComponent annotation = type.getAnnotation(ButterComponent.class);
         String template = annotation == null ? "" : annotation.template();
@@ -44,7 +46,7 @@ final class JavaContracts {
                 actions.put(method.getName(), method);
             }
         }
-        return new JavaContracts(template, symbols, actions);
+        return new JavaContracts(type, template, symbols, actions);
     }
 
     boolean has(String path) {

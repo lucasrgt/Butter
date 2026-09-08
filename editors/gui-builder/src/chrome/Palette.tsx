@@ -1,7 +1,7 @@
 import { Button } from '@heroui/react'
 import { PALETTE, type Kind } from '../model/types.ts'
 
-const LABEL: Record<Kind, string> = {
+const LABEL: Partial<Record<Kind, string>> = {
   screen: 'Screen',
   row: 'Row',
   column: 'Column',
@@ -19,7 +19,7 @@ export function Palette(props: {
 }) {
   return (
     <div className="flex flex-wrap gap-1">
-      {PALETTE.map((kind) => (
+      {PALETTE.filter(kind => LABEL[kind]).map((kind) => (
         <Button
           key={kind}
           size="sm"

@@ -51,6 +51,7 @@ public final class ButterRuntime {
     public void click(String id) {
         WidgetSpec spec = find(resolved, id);
         if (spec == null) throw new IllegalStateException("no widget " + id);
+        WidgetState.requireInput(spec);
         boolean handled = chrome.click(resolved, spec) || controls.click(template, spec, resolver);
         Object action = spec.prop("action");
         if (action != null && !"null".equals(String.valueOf(action))) {
@@ -70,6 +71,12 @@ public final class ButterRuntime {
         return true;
     }
 
+    public boolean focusNext(boolean reverse) {
+        if (!chrome.focusNext(resolved, reverse)) return false;
+        rebuild();
+        return true;
+    }
+
     public boolean backspace() {
         if (!chrome.backspace(template, resolved, resolver)) return false;
         rebuild();
@@ -83,6 +90,7 @@ public final class ButterRuntime {
     public void pointer(String id, int localX, int localY, int width, int height) {
         WidgetSpec spec = find(resolved, id);
         if (spec == null) throw new IllegalStateException("no widget " + id);
+        WidgetState.requireInput(spec);
         if (chrome.pointer(template, spec, localY, height, resolver)
                 || controls.pointer(template, spec, localX, width, resolver)) rebuild();
         else click(id);
@@ -95,6 +103,7 @@ public final class ButterRuntime {
     public void setValue(String id, int value) {
         WidgetSpec spec = find(resolved, id);
         if (spec == null) throw new IllegalStateException("no widget " + id);
+        WidgetState.requireInput(spec);
         if (chrome.setValue(template, spec, value, resolver) || controls.setValue(template, spec, value, resolver)) {
             rebuild();
         }
@@ -103,19 +112,20 @@ public final class ButterRuntime {
     public void rightClick(String id) {
         WidgetSpec spec = find(resolved, id);
         if (spec == null) throw new IllegalStateException("no widget " + id);
+        WidgetState.requireInput(spec);
         if ("Slot".equals(spec.type())) return;
         click(id);
     }
 
     public void rebuild() {
-        resolved = GridFilter.apply(controls.apply(chrome.apply(WidgetExpander.expand(resolver.resolve(template)))));
+        resolved = WidgetState.apply(GridFilter.apply(controls.apply(chrome.apply(WidgetExpander.expand(resolver.resolve(template))))));
         layout = LayoutEngine.layout(resolved, BoxConstraints.loose(427, 240));
         semantics = SemanticTree.of(resolved);
         generation++;
     }
 
     static WidgetSpec find(WidgetSpec spec, String id) {
-        if (id != null && id.equals(spec.id())) return spec;
+        if (id != null && (id.equals(spec.id()) || id.equals(butter.core.SemanticProperties.id(spec)))) return spec;
         java.util.List<WidgetSpec> children = spec.children();
         for (int index = 0; index < children.size(); index++) {
             WidgetSpec match = find(children.get(index), id);

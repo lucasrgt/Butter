@@ -84,7 +84,7 @@ final class Resolver {
     }
 
     private Object read(String path) {
-        if (backing == null) return new Binding(path);
+        if (backing == null) throw new IllegalStateException("no backing class for state " + path);
         Object current = backing;
         String[] parts = path.split("\\.");
         for (int index = 0; index < parts.length; index++) {

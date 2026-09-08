@@ -3,6 +3,7 @@ package butter.layout;
 import java.util.ArrayList;
 import java.util.List;
 import butter.core.WidgetSpec;
+import butter.core.PixelPosition;
 
 /** Row/Column/Stack packing: items, justify, grow, margins, and h-full. */
 final class FlexPack {
@@ -84,8 +85,8 @@ final class FlexPack {
         for (int index = 0; index < children.size(); index++) {
             LayoutNode child = LayoutEngine.layout(children.get(index), childInner);
             raw.add(child);
-            width = Math.max(width, child.bounds.width);
-            height = Math.max(height, child.bounds.height);
+            width = Math.max(width, PixelPosition.value(child.widget, "x", 0) + child.bounds.width);
+            height = Math.max(height, PixelPosition.value(child.widget, "y", 0) + child.bounds.height);
         }
         width += style.padX();
         height += style.padY();
@@ -99,8 +100,8 @@ final class FlexPack {
         int innerH = Math.max(0, height - style.padY());
         for (int index = 0; index < raw.size(); index++) {
             LayoutNode child = raw.get(index);
-            int x = style.padLeft + shift(style.justify, innerW, child.bounds.width);
-            int y = style.padTop + shift(style.items, innerH, child.bounds.height);
+            int x = style.padLeft + PixelPosition.value(child.widget, "x", shift(style.justify, innerW, child.bounds.width));
+            int y = style.padTop + PixelPosition.value(child.widget, "y", shift(style.items, innerH, child.bounds.height));
             laid.add(new LayoutNode(child.widget, new Rect(x, y, child.bounds.width, child.bounds.height),
                     child.children));
         }

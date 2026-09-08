@@ -60,6 +60,7 @@ public final class HostUiSmoke {
             runtime.tick();
             require(ui.screen().isEmpty() && ui.nodes().isEmpty(), "semantic close failed");
             record(trace, "closed", ui);
+            SemanticUiSmoke.verify(runtime);
             System.out.println("BUTTER_HOSTUI_SOURCE=" + minecraftClassSource());
             System.out.println("BUTTER_HOSTUI_TRACE=" + trace);
         } finally { runtime.close(); }

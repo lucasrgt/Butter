@@ -2,6 +2,7 @@ import { zipSync, strToU8 } from 'fflate'
 import type { ButterDocument } from '../document.ts'
 import { exportPixels } from '../export-pixels.ts'
 import { semanticTree } from '../semantics-export.ts'
+import { machineDescription } from '../machine-description.ts'
 import { positionedBoxes } from '../position.ts'
 import { resolvedComponent } from './document.ts'
 import { packFiles } from './archive.ts'
@@ -11,6 +12,7 @@ export function exportBundle(doc:ButterDocument) {
     'interface.butter':strToU8(exportPixels(doc)),
     'document.buttergui.json':strToU8(JSON.stringify(doc,null,2)),
     'semantics.json':strToU8(JSON.stringify(semanticTree(doc),null,2)),
+    'machine.gui.json':strToU8(JSON.stringify(machineDescription(doc),null,2)),
   }
   const boxes=positionedBoxes(doc)
   const instances=Object.entries(doc.component_refs??{}).map(([id,ref])=>{

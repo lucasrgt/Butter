@@ -1,0 +1,23 @@
+{
+  "schema": "butter.pack.v1",
+  "id": "example-plasma",
+  "version": "1.0.0",
+  "title": "Plasma machine controls",
+  "targets": ["b1.7.3"],
+  "categories": [{"id":"storage","title":"Storage"}],
+  "assets": {},
+  "machine_types": [{
+    "schema": "machine.types.v1", "id": "example:plasma", "version": "1.0.0", "title": "Plasma resources",
+    "types": [{"id":"example:plasma","label":"Plasma","capabilities":["storage.plasma"],"properties":{
+      "amount":{"type":"integer","unit":"mB","min":0},
+      "capacity":{"type":"integer","unit":"mB","min":0},
+      "temperature":{"type":"number","unit":"K","min":0}
+    }}]
+  }],
+  "components": [{
+    "schema":"butter.component.v1","id":"plasma-gauge","title":"Plasma gauge","category":"storage","base":"gas",
+    "variants":[{"id":"normal","title":"Normal","w":16,"h":48}],
+    "semantics":{"capabilities":["plasma.inspect"],"attributes":{"machine.accepts":"storage.plasma","machine.unit.value":"mB","machine.unit.max":"mB"}},
+    "binding_hints":{"value":"plasmaAmount","max":"plasmaCapacity"}
+  }]
+}

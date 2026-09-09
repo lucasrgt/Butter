@@ -27,6 +27,7 @@ export interface ComponentPack {
   schema: 'butter.pack.v1'; id: string; version: string; title: string; description?: string
   author?: string; license?: string; tags?: string[]; targets: ['b1.7.3']
   categories: Category[]; components: ComponentDefinition[]; assets: Record<string, string>
+  machine_types?: import('./machine-types.ts').MachineTypePack[]
 }
 export interface InstalledPack { pack: ComponentPack; enabled: boolean; source?: string }
 export interface LibraryDocument {

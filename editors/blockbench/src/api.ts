@@ -22,6 +22,8 @@ import { editorCall, editorCommands } from './editor-api.ts'
 import { requestedIds } from './editor-args.ts'
 import { translate, positionSelection } from './transforms.ts'
 import { reparent } from './layer-operations.ts'
+import { machineCall } from './machine-bridge.ts'
+import { machineDescription } from './machine-description.ts'
 import { inheritedFlag } from './selection.ts'
 
 type Args = Record<string, unknown>
@@ -38,6 +40,7 @@ function integer(args: Args, key: string): number | undefined {
 }
 
 export function call(command: string, args: Args = {}): unknown {
+  if(command==='machine')return machineCall(args)
   if(command==='library')return args.action==='show'?showLibrary():libraryCall(args)
   if(command==='component')return customComponentCall(args)
   if (command === 'properties') return propertiesCall(args)
@@ -93,7 +96,8 @@ export function call(command: string, args: Args = {}): unknown {
     if (format === 'document') return { format, text: JSON.stringify(doc, null, 2) }
     if (format === 'spec') return { format, text: JSON.stringify(semanticSpec(doc), null, 2) }
     if (format === 'semantics') return { format, text: JSON.stringify(semanticTree(doc), null, 2) }
-    throw new Error('Export format must be butter, document, spec or semantics')
+    if (format === 'machine') return { format, text: JSON.stringify(machineDescription(doc), null, 2) }
+    throw new Error('Export format must be butter, document, spec, semantics or machine')
   }
   const revision = integer(args, 'expected_revision')
   store.assertIdle(); store.checkRevision(revision)

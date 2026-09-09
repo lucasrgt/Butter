@@ -1,6 +1,7 @@
 import { readDefinition } from './definition.ts'
 import { object, keys, id, string, array, version, relativePath, pngInfo } from './checks.ts'
 import { MAX_PACK_BYTES, type ComponentPack, type Category } from './types.ts'
+import { readMachineTypes, machinePackSignature } from './machine-types.ts'
 
 export type FileReader = (path: string) => Uint8Array
 export function readPack(raw: unknown, read?: FileReader): ComponentPack {
@@ -26,9 +27,10 @@ export function readPack(raw: unknown, read?: FileReader): ComponentPack {
     const { assets: _, ...component } = v
     v = { schema:'butter.pack.v1', id:v.id, title:v.title, version:v.version ?? '1.0.0', targets:['b1.7.3'], categories:typeof v.category==='string'?[{id:v.category,title:v.category.replaceAll('-',' ')}]:[], components:[component] }
   }
-  keys(v,['$schema','schema','id','version','title','description','author','license','tags','targets','categories','components','assets'],'pack')
+  keys(v,['$schema','schema','id','version','title','description','author','license','tags','targets','categories','components','assets','machine_types'],'pack')
   if (v.schema !== 'butter.pack.v1' || JSON.stringify(v.targets) !== '["b1.7.3"]') throw Error('Expected butter.pack.v1 targeting b1.7.3')
   const pack: ComponentPack = { schema:v.schema,id:id(v.id),version:version(v.version),title:string(v.title,'pack title',100),targets:['b1.7.3'],categories:[],components:[],assets }
+  if(v.machine_types!==undefined)pack.machine_types=readMachineTypes(v.machine_types)
   for (const key of ['description','author','license'] as const) if(v[key]!==undefined)pack[key]=string(v[key],key,key==='description'?500:100)
   if(v.tags!==undefined)pack.tags=array(v.tags,'tags',20).map(s=>string(s,'tag',40))
   const category = (raw: unknown) => {
@@ -73,5 +75,11 @@ export function combinePacks(packs: ComponentPack[], metadata: {id:string;versio
       components.push(def)
     }
   }
-  return readPack({schema:'butter.pack.v1',...metadata,targets:['b1.7.3'],categories,components,assets})
+  const machineTypes=new Map<string,NonNullable<ComponentPack['machine_types']>[number]>()
+  for(const pack of packs)for(const typePack of pack.machine_types??[]){
+    const previous=machineTypes.get(typePack.id)
+    if(previous&&machinePackSignature(previous)!==machinePackSignature(typePack))throw Error(`Conflicting machine pack: ${typePack.id}`)
+    machineTypes.set(typePack.id,typePack)
+  }
+  return readPack({schema:'butter.pack.v1',...metadata,targets:['b1.7.3'],categories,components,assets,...(machineTypes.size?{machine_types:[...machineTypes.values()]}:{})})
 }

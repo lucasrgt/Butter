@@ -208,6 +208,11 @@ persist in `.bbmodel` and authoring JSON.
 
 ## Configurable semantics
 
+Optional **Machine contract** dropdowns link fields/events to Pixel Harness cell
+resources and machine actions. Custom packs can carry extensible resource catalogs,
+including plasma. Export the standalone GUI contract without either editor at
+runtime. See [machine contract integration](../../docs/MACHINE-CONTRACT.md).
+
 Properties now includes a Semantics section for the screen and each component: stable IDs, compatible roles, labels, descriptions, optional group regions, persistent container indices, search tab order, typed backing bindings and click handlers. Tree opens a native declaration inspector. Export supports Semantic tree JSON. Use `butter_semantics` for the same controls through MCP. See [the semantic contract](../../docs/SEMANTICS.md) for binding types, runtime behavior and E2E verification boundaries.
 
 ## Component variants and visual tests

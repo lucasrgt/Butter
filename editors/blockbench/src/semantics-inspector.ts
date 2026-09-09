@@ -7,6 +7,7 @@ import { semanticCatalog, type SemanticConfig } from './semantics-catalog.ts'
 import type { Widget } from '../../gui-builder/src/model/types.ts'
 import { resolvedSemantics, definition } from './library/document.ts'
 import { semanticFields } from './library/semantic-fields.ts'
+import { machineInspector } from './machine-inspector.ts'
 
 export function semanticsInspector(node: Widget) {
   const store = current(), doc = store.snapshot(), config = resolvedSemantics(doc)[node.id], catalog = semanticCatalog(node.kind)
@@ -63,5 +64,6 @@ export function semanticsInspector(node: Widget) {
   details.append(element('p', 'butter-asset-status', catalog.actions.length ? `Actions: ${catalog.actions.join(', ')}` : 'Read-only semantic node'))
   root.append(details)
   root.append(semanticFields(config,locked,update))
+  root.append(machineInspector(resolvedSemantics(doc)[doc.root.id].id,config.id,catalog.bindings.map(b=>b.field),catalog.actions,locked))
   return root
 }

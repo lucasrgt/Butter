@@ -1,3 +1,4 @@
+import { MACHINE_TYPES_SCHEMA } from './machine-types.ts'
 const text={type:'string',minLength:1,maxLength:100}
 const identifier={type:'string',pattern:'^[a-z][a-z0-9_.-]*$',maxLength:80}
 const version={type:'string',pattern:'^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$'}
@@ -43,7 +44,7 @@ export const PACK_SCHEMA={
   $schema:'https://json-schema.org/draft/2020-12/schema',title:'Butter component pack v1',type:'object',additionalProperties:false,
   required:['schema','id','version','title','targets','components'],properties:{
     $schema:{type:'string'},schema:{const:'butter.pack.v1'},id:identifier,version,title:text,description:{type:'string',maxLength:500},author:text,license:text,tags:array({type:'string',maxLength:40},20),
-    targets:{const:['b1.7.3']},categories:array(category,32),assets,
+    targets:{const:['b1.7.3']},categories:array(category,32),assets,machine_types:MACHINE_TYPES_SCHEMA,
     components:{...array({oneOf:[{type:'string',description:'Relative component JSON path.'},{type:'object',additionalProperties:false,required:COMPONENT_SCHEMA.required,properties:componentProperties}]},64),minItems:1},
   },
 }

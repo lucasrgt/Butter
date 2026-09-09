@@ -58,6 +58,8 @@ BBPlugin.register('blockbench_butter', {
       click: () => attempt(() => call('begin', { preset: 'crusher' })) })
     MenuBar.addAction(action, 'file.new')
     host.BlockbenchButter = api
+    window.addEventListener('machine-contract-changed',refresh)
+    cleanups.push(()=>window.removeEventListener('machine-contract-changed',refresh))
     cleanups.push(installKeyboard())
     Blockbench.on('select_project', disposeSemanticTree); Blockbench.on('select_mode', disposeSemanticTree)
     Blockbench.on('select_project', disposeContextMenu); Blockbench.on('select_mode', disposeContextMenu)

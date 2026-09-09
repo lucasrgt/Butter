@@ -6,7 +6,7 @@ import { previewPng } from './preview.ts'
 import { exportBundle, exportWarnings } from './library/bundle.ts'
 import { prepareImages } from './library/images.ts'
 
-export async function save(format: 'butter' | 'document' | 'spec' | 'semantics' | 'png' | 'bundle') {
+export async function save(format: 'butter' | 'document' | 'spec' | 'semantics' | 'machine' | 'png' | 'bundle') {
   const doc=current().snapshot(),name = doc.root.name.replace(/[^A-Za-z0-9_-]/g, '_')
   if(format==='bundle') {
     Blockbench.export({type:'Butter integration bundle',extensions:['zip'],name:`${name}-integration`,savetype:'buffer',content:new Uint8Array(exportBundle(current().snapshot())).buffer})
@@ -22,7 +22,7 @@ export async function save(format: 'butter' | 'document' | 'spec' | 'semantics' 
   if(format==='butter')for(const warning of exportWarnings(current().snapshot()))Blockbench.showQuickMessage(warning,6000)
   const extension = format === 'butter' ? 'butter' : 'json'
   Blockbench.export({ type: 'Butter GUI', extensions: [extension],
-    name: format === 'document' ? `${name}.buttergui` : format === 'spec' || format === 'semantics' ? `${name}.${format}` : name,
+    name: format === 'document' ? `${name}.buttergui` : format === 'machine' ? `${name}.machine.gui` : format === 'spec' || format === 'semantics' ? `${name}.${format}` : name,
     savetype: 'text', content: text })
 }
 

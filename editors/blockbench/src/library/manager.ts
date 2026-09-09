@@ -1,4 +1,4 @@
-import { element, button, label, attempt } from '../dom.ts'
+import { element, button, attempt } from '../dom.ts'
 import { refresh } from '../host.ts'
 import { library } from './registry.ts'
 import { libraryCall } from './api.ts'
@@ -35,6 +35,8 @@ function combine(selected:Set<string>) {
 }
 export function showLibrary() {
   const root=element('div','butter-ui butter-pack-manager'),bar=element('div','butter-pack-actions'),selected=new Set<string>()
+  const combineButton=button('Combine selected packs',()=>combine(selected))
+  combineButton.disabled=true
   bar.append(button('Import JSON / ZIP',()=>{
     Blockbench.import({type:'Butter component / pack',extensions:['json','zip'],readtype:'binary',multiple:false},(files:Filesystem.FileResult[])=>attempt(()=>{
       const file=files[0];if(!file)return
@@ -50,20 +52,26 @@ export function showLibrary() {
     if(path){libraryCall({action:'import',path});showLibrary()}
   }),button('New pack',createPack),button('Install Tech Pack',()=>{library().install(techPack());refresh();showLibrary()}))
   root.append(bar,element('p','butter-pack-note','JSON + PNG · Versions are pinned in saved projects. Export a pack to edit its files, then increment its version and import again.'))
+  root.append(element('p','butter-pack-note','Select checkboxes to combine packs. Enable / Disable controls which packs appear in the component library.'))
   const list=element('div','butter-pack-list')
   for(const entry of library().list()) {
     const key=`${entry.pack.id}@${entry.pack.version}`,row=element('div','butter-pack-row'),check=element('input')
-    check.type='checkbox';check.setAttribute('aria-label',`Select ${key} for combining`);check.onchange=()=>{if(check.checked)selected.add(key);else selected.delete(key)}
-    const info=element('div','butter-pack-info'),heading=element('strong','',entry.pack.title)
+    check.type='checkbox';check.setAttribute('aria-label',`Select ${key} for combining`);check.onchange=()=>{
+      if(check.checked)selected.add(key);else selected.delete(key)
+      combineButton.disabled=!selected.size
+      combineButton.textContent=selected.size?`Combine selected packs (${selected.size})`:'Combine selected packs'
+    }
+    const info=element('span','butter-pack-info'),heading=element('strong','',entry.pack.title)
     info.append(heading,element('small','',`${key} · ${entry.pack.components.length} components`),element('small','',entry.pack.description??entry.pack.categories.map(c=>c.title).join(' · ')))
     const controls=element('div','butter-pack-actions')
     controls.append(button(entry.enabled?'Disable':'Enable',()=>{libraryCall({action:'enable',pack:key,enabled:!entry.enabled});showLibrary()}),button('Export',()=>savePack(key)),
       button('Remove',()=>{libraryCall({action:'remove',pack:key});showLibrary()},'Remove installed version. Saved projects retain their definitions.'))
     if(entry.source)controls.append(button('Reload',()=>{libraryCall({action:'reload',pack:key});showLibrary()}))
-    row.append(check,info,controls);list.append(row)
+    const choice=element('label','butter-pack-choice');choice.append(check,info)
+    row.append(choice,controls);list.append(row)
   }
   if(!list.children.length)list.append(element('p','butter-pack-note','No custom packs installed. Import a pack or try the Tech Pack.'))
-  root.append(list,button('Combine selected packs',()=>combine(selected)))
+  root.append(list,combineButton)
   dialog?.delete();dialog=new Dialog({id:'butter_component_library',title:'Butter — Component packs',width:820,lines:[root],buttons:['Close']});dialog.show()
   return {packs:library().list().length,revision:library().revision}
 }

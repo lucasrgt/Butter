@@ -15,12 +15,17 @@ body[mode="butter_gui"] .panel_container:not([panel_id^="butter_"]) { display: n
 .butter-ui *, .butter-ui *::before, .butter-ui *::after { box-sizing: border-box; }
 .butter-ui [hidden] { display: none !important; }
 .butter-ui button, .butter-ui input, .butter-ui select { font: inherit; color: inherit; }
-.butter-ui button, .butter-ui select, .butter-ui input:not([type="range"]) {
+.butter-ui button, .butter-ui select, .butter-ui input:not([type="range"]):not([type="checkbox"]) {
   height: var(--butter-control); min-height: var(--butter-control); margin: 0;
   border: 1px solid transparent; border-radius: 3px;
   background: var(--color-button); padding: 0 8px;
 }
-.butter-ui input:not([type="range"]) { background: var(--color-dark); border-color: var(--color-border); }
+.butter-ui input:not([type="range"]):not([type="checkbox"]) { background: var(--color-dark); border-color: var(--color-border); }
+.butter-ui input[type="checkbox"] {
+  display: inline-flex; align-items: center; justify-content: center; flex: none;
+  width: 24px; min-width: 24px; height: 24px; min-height: 24px; margin: 0; padding: 0;
+  border: 0; background: transparent; cursor: pointer; justify-self: start;
+}
 .butter-ui select { cursor: pointer; min-width: 0; }
 .butter-ui button { cursor: pointer; }
 .butter-ui button:hover:not(:disabled), .butter-ui select:hover {
@@ -149,7 +154,6 @@ body[mode="butter_gui"] .panel_container:not([panel_id^="butter_"]) { display: n
 .butter-preview-level { display: flex; align-items: center; gap: 6px; min-width: 0; }
 .butter-preview-level input[type=range] { flex: 1; width: 60px; min-width: 0; padding: 0; accent-color: var(--color-accent); }
 .butter-preview-level output { min-width: 32px; text-align: right; font-variant-numeric: tabular-nums; }
-.butter-component-properties input[type=checkbox] { width: 16px; justify-self: start; }
 .butter-component-properties input[type=color] { padding: 2px; height: 24px; }
 
 .butter-preview-presets { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 3px; margin: 4px 0 8px; }
@@ -159,9 +163,9 @@ body[mode="butter_gui"] .panel_container:not([panel_id^="butter_"]) { display: n
 .butter-component-thumbnail { width: 40px; height: 40px; flex-shrink: 0; image-rendering: pixelated; }
 .butter-pack-manager { max-height: 65vh; overflow: auto; padding: 4px; }
 .butter-pack-actions { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
-.butter-pack-row { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 8px; padding: 14px 0; border-top: 1px solid var(--color-border); }
+.butter-pack-row { display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 8px 10px; padding: 14px 0; border-top: 1px solid var(--color-border); }
+.butter-pack-choice { grid-column: 1 / -1; display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 10px; align-items: start; cursor: pointer; }
 .butter-pack-row > .butter-pack-actions { grid-column: 2; }
-.butter-pack-row input[type=checkbox] { width: 16px; }
 .butter-pack-info { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .butter-pack-info small, .butter-instance-origin small { font-size: 11px; color: var(--color-subtle_text); overflow-wrap: anywhere; }
 .butter-pack-note { font-size: 11px; line-height: 1.5; color: var(--color-subtle_text); margin: 8px 0; }

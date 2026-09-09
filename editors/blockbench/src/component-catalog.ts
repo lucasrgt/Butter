@@ -38,18 +38,26 @@ export const COMPONENTS: ComponentEntry[] = [
   { kind: 'separator', title: 'Separator', icon: 'horizontal_rule', category: 'layout', keywords: 'separator' },
 ]
 export const PAGE_SIZE = 10
+export interface CatalogCategory {id:string;title:string;label:string;parent?:string;pack:string;pack_title:string;version?:string;icon?:string}
 export function componentCategories(pack='all') {
-  return [...(pack==='all'||pack==='builtin'?CATEGORIES:[]),...(pack==='builtin'?[]:library().visible(pack==='all'?undefined:pack).flatMap(e=>categoryTree(e.pack.categories).map(c=>({id:`${e.pack.id}@${e.pack.version}/${c.id}`,title:`${e.pack.title} · ${categoryPath(e.pack.categories,c.id).map(p=>p.title).join(' / ')}`}))))]
+  const builtin:CatalogCategory[]=CATEGORIES.map(c=>({...c,label:c.title,pack:'builtin',pack_title:'Built-in'}))
+  return [...(pack==='all'||pack==='builtin'?builtin:[]),...(pack==='builtin'?[]:library().visible(pack==='all'?undefined:pack).flatMap(e=>categoryTree(e.pack.categories).map(c=>({
+    id:`${e.pack.id}@${e.pack.version}/${c.id}`,title:`${e.pack.title} · ${categoryPath(e.pack.categories,c.id).map(p=>p.title).join(' / ')}`,
+    label:c.title,parent:c.parent?`${e.pack.id}@${e.pack.version}/${c.parent}`:undefined,pack:`${e.pack.id}@${e.pack.version}`,pack_title:e.pack.title,version:e.pack.version,icon:c.icon,
+  }))))]
 }
 export function allComponents(pack='all'):ComponentEntry[] {
   return [...(pack==='all'||pack==='builtin'?COMPONENTS:[]),...(pack==='builtin'?[]:library().catalog('',pack==='all'?undefined:pack).map(c=>({
     kind:c.base,title:c.title,icon:c.icon??'extension',category:`${c.pack}/${c.category}`,category_ancestors:c.category_ancestors.map(id=>`${c.pack}/${id}`),keywords:[c.id,c.description,c.pack_title,c.category_title,...c.tags??[]].join(' '),pack:c.pack,component:c.id,
   })))]
 }
-export function componentPage(query = '', category = 'all', page = 1, entries = allComponents()) {
+export function matchingComponents(query = '', category = 'all', entries = allComponents()) {
   const terms = query.trim().toLocaleLowerCase().split(/\s+/).filter(Boolean)
-  const matches = entries.filter(item => (category === 'all' || item.category === category || item.category_ancestors?.includes(category)) &&
+  return entries.filter(item => (category === 'all' || item.category === category || item.category_ancestors?.includes(category)) &&
     terms.every(term => `${item.title} ${item.kind} ${item.keywords}`.toLocaleLowerCase().includes(term)))
+}
+export function componentPage(query = '', category = 'all', page = 1, entries = allComponents()) {
+  const matches=matchingComponents(query,category,entries)
   const pages = Math.max(1, Math.ceil(matches.length / PAGE_SIZE))
   const current = Math.max(1, Math.min(pages, page))
   return { items: matches.slice((current - 1) * PAGE_SIZE, current * PAGE_SIZE),

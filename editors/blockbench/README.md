@@ -26,11 +26,12 @@ without MCP; the companion API is `globalThis.BlockbenchButter`, version 1.
   Select from the canvas or layer tree; rename, reparent, reorder, duplicate,
   hide, delete and undo/redo. Hidden layers remain in exports.
 - **Component library:** search titles/keywords, combine with Layout, Inventory,
-  Machine or Input categories, and browse grouped results. Each page contains
-  at most 10 components across all groups. Pagination appears only when needed;
-  custom packs retain their declared categories. Search remains focused as results
-  update. `butter_view` controls search/category/page; `butter_components` queries
-  the catalog without changing the current filters. The pack filter and **Packs**
+  Machine or Input categories, and browse a collapsible pack → category → subcategory
+  tree with local names and descendant counts. Filters stay fixed above the scrollable
+  tree. One toggle expands or collapses all groups; large categories page independently
+  in batches of 10. Search reveals matching branches and retains their ancestors.
+  `butter_view` controls filters; `butter_components` retains paginated catalog queries
+  without changing the current filters. The pack filter and pack manager button
   manager add declarative JSON/PNG components, immutable versions, import/export,
   combination and the original Tech Pack. See [Component packs](COMPONENT-PACKS.md)
   and [one pack per mod, versioned updates and subcategories](PACK-WORKFLOW.md).

@@ -1,4 +1,5 @@
 import css from './style.css'
+import paletteCss from './palette.css'
 import { restoreMaterialPack, disposeMaterialPack } from './minecraft/material-assets.ts'
 import { api, call } from './api.ts'
 import { setupProjectState, teardownProjectState, subscribe, refresh } from './host.ts'
@@ -26,7 +27,7 @@ function panel(id: string, name: string, side: 'left' | 'right', render: (root: 
   const instance = new Panel(id, { name, icon: 'dashboard', default_side: side,
     default_position: { slot: side === 'right' ? 'right_bar' : 'left_bar' },
     mode_positions: { butter_gui: { slot: side === 'right' ? 'right_bar' : 'left_bar' } },
-    condition: () => !!Project && Modes.selected === mode, resizable: true, growable: id !== 'butter_components' })
+    condition: () => !!Project && Modes.selected === mode, resizable: true, growable: true })
   const root = element('div', 'butter-ui butter-panel')
   instance.node.append(root)
   const update = () => { if (Project) attempt(() => render(root)) }
@@ -40,7 +41,7 @@ BBPlugin.register('blockbench_butter', {
   icon: 'dashboard_customize', variant: 'both', tags: ['GUI', 'Minecraft'],
   onload() {
     setupProjectState()
-    style = Blockbench.addCSS(css)
+    style = Blockbench.addCSS(css+paletteCss)
     mode = new Mode('butter_gui', {
       name: 'Butter', icon: 'dashboard_customize', condition: () => !!Project,
       hide_toolbars: true, selectElements: false,

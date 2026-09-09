@@ -52,6 +52,10 @@ their embedded definitions until explicitly upgraded.
 Category `parent` references another category ID within the same pack. Cycles,
 missing parents and hierarchies deeper than eight levels are rejected. Selecting
 a parent category includes every descendant. Search includes the category path.
+The palette displays nested, collapsible groups with local titles and descendant
+counts. The tree scrolls beneath fixed filters, and a single button alternates
+between expanding and collapsing all groups. Categories with more than ten direct
+components paginate independently, so paging never hides another category.
 Pack limits remain 64 components, 32 categories, 64 images and 2 MB; use variants
 for cosmetic alternatives, and justified addons for independently maintained content.
 

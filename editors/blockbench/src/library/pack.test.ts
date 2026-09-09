@@ -81,7 +81,8 @@ describe('persistent immutable library versions',()=>{
     const changed=structuredClone(pack);changed.components[0].title='New port'
     expect(()=>registry.install(changed)).toThrow('increment');expect(registry.revision).toBe(1)
     changed.version='1.1.0';registry.install(changed)
-    expect(registry.catalog()).toHaveLength(16)
+    expect(registry.catalog()).toHaveLength(8)
+    expect(registry.catalog('','butter-tech@1.0.0')).toHaveLength(8)
     registry.enable('butter-tech@1.0.0',false);expect(registry.catalog()).toHaveLength(8)
     expect(new ComponentLibrary(storage).list()).toEqual(registry.list())
     expect(()=>registry.check(0)).toThrow('revision conflict')

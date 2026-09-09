@@ -3,7 +3,8 @@ const text={type:'string',minLength:1,maxLength:100}
 const identifier={type:'string',pattern:'^[a-z][a-z0-9_.-]*$',maxLength:80}
 const version={type:'string',pattern:'^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$'}
 const values={type:'object',additionalProperties:{type:['string','number','boolean']}}
-const category={type:'object',additionalProperties:false,required:['id','title'],properties:{id:identifier,title:text,icon:text}}
+const category={type:'object',additionalProperties:false,required:['id','title'],properties:{id:identifier,title:text,icon:text,parent:identifier}}
+const mod={type:'object',additionalProperties:false,required:['id'],properties:{id:identifier,role:{enum:['primary','addon'],default:'primary'},reason:{type:'string',minLength:1,maxLength:500}},allOf:[{if:{required:['role'],properties:{role:{const:'addon'}}},then:{required:['reason']}}]}
 const array=(items:object,maxItems:number)=>({type:'array',items,maxItems})
 const semantics={type:'object',additionalProperties:false,properties:{
   role:text,label:{type:'string',maxLength:200},description:{type:'string',maxLength:500},region:{type:'boolean'},
@@ -44,7 +45,7 @@ export const PACK_SCHEMA={
   $schema:'https://json-schema.org/draft/2020-12/schema',title:'Butter component pack v1',type:'object',additionalProperties:false,
   required:['schema','id','version','title','targets','components'],properties:{
     $schema:{type:'string'},schema:{const:'butter.pack.v1'},id:identifier,version,title:text,description:{type:'string',maxLength:500},author:text,license:text,tags:array({type:'string',maxLength:40},20),
-    targets:{const:['b1.7.3']},categories:array(category,32),assets,machine_types:MACHINE_TYPES_SCHEMA,
+    targets:{const:['b1.7.3']},categories:array(category,32),assets,machine_types:MACHINE_TYPES_SCHEMA,mod,
     components:{...array({oneOf:[{type:'string',description:'Relative component JSON path.'},{type:'object',additionalProperties:false,required:COMPONENT_SCHEMA.required,properties:componentProperties}]},64),minItems:1},
   },
 }

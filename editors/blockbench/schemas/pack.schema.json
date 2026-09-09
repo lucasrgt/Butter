@@ -83,6 +83,11 @@
             "type": "string",
             "minLength": 1,
             "maxLength": 100
+          },
+          "parent": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_.-]*$",
+            "maxLength": 80
           }
         }
       },
@@ -95,6 +100,176 @@
         "type": "string",
         "description": "Embedded data:image/png;base64,... or a relative PNG file path."
       }
+    },
+    "machine_types": {
+      "type": "array",
+      "maxItems": 64,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema",
+          "id",
+          "version",
+          "title",
+          "types"
+        ],
+        "properties": {
+          "schema": {
+            "const": "machine.types.v1"
+          },
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120,
+            "pattern": "^[a-z][a-z0-9_.-]*:[a-z][a-z0-9_.-]*$"
+          },
+          "version": {
+            "type": "string",
+            "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "types": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 128,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "label",
+                "properties"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120,
+                  "pattern": "^[a-z][a-z0-9_.-]*:[a-z][a-z0-9_.-]*$"
+                },
+                "label": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                },
+                "capabilities": {
+                  "type": "array",
+                  "maxItems": 32,
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120,
+                    "pattern": "^[a-zA-Z_][a-zA-Z0-9_.:-]*$"
+                  },
+                  "default": []
+                },
+                "properties": {
+                  "type": "object",
+                  "minProperties": 1,
+                  "maxProperties": 128,
+                  "propertyNames": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120,
+                    "pattern": "^[a-zA-Z_][a-zA-Z0-9_.:-]*$"
+                  },
+                  "additionalProperties": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "type"
+                    ],
+                    "properties": {
+                      "type": {
+                        "enum": [
+                          "number",
+                          "integer",
+                          "boolean",
+                          "string"
+                        ]
+                      },
+                      "access": {
+                        "enum": [
+                          "read",
+                          "readwrite"
+                        ],
+                        "default": "read"
+                      },
+                      "unit": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 60
+                      },
+                      "min": {
+                        "type": "number"
+                      },
+                      "max": {
+                        "type": "number"
+                      },
+                      "description": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 500
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Portable resource types. Range order, numeric ranges and unique identities are also checked by readMachineTypes."
+      }
+    },
+    "mod": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_.-]*$",
+          "maxLength": 80
+        },
+        "role": {
+          "enum": [
+            "primary",
+            "addon"
+          ],
+          "default": "primary"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "role"
+            ],
+            "properties": {
+              "role": {
+                "const": "addon"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "reason"
+            ]
+          }
+        }
+      ]
     },
     "components": {
       "type": "array",
@@ -165,6 +340,11 @@
                         "type": "string",
                         "minLength": 1,
                         "maxLength": 100
+                      },
+                      "parent": {
+                        "type": "string",
+                        "pattern": "^[a-z][a-z0-9_.-]*$",
+                        "maxLength": 80
                       }
                     }
                   }

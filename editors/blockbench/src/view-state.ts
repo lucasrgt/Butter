@@ -34,7 +34,7 @@ export function viewState(): ViewState {
   if (!Project) return structuredClone(defaults)
   const state = { ...structuredClone(defaults), ...memory(Project).view }
   if(!['all','builtin'].includes(state.component_pack)&&!library().list().some(e=>e.enabled&&`${e.pack.id}@${e.pack.version}`===state.component_pack))state.component_pack='all'
-  if(state.component_category!=='all'&&!componentCategories().some(c=>c.id===state.component_category))state.component_category='all'
+  if(state.component_category!=='all'&&!componentCategories(state.component_pack).some(c=>c.id===state.component_category))state.component_category='all'
   return structuredClone(state)
 }
 
@@ -58,7 +58,7 @@ export function setView(args: Record<string, unknown>) {
     if (key === 'split_ratio' && !(typeof value === 'number' && value >= 25 && value <= 75)) throw new Error('Split ratio must be 25–75')
     if (['pan_x', 'pan_y'].includes(key) && !(typeof value === 'number' && Number.isFinite(value) && Math.abs(value) <= 100000)) throw new Error('Pan must be within ±100000 screen pixels')
     if (key === 'component_search' && !(typeof value === 'string' && value.length <= 100)) throw new Error('Component search is limited to 100 characters')
-    if (key === 'component_category' && value !== 'all' && !componentCategories().some(c => c.id === value)) throw new Error('Unknown component category')
+    if (key === 'component_category' && value !== 'all' && !componentCategories(String(args.component_pack??next.component_pack)).some(c => c.id === value)) throw new Error('Unknown component category')
     if(key==='component_pack'&&!['all','builtin'].includes(String(value))&&!library().list().some(e=>e.enabled&&`${e.pack.id}@${e.pack.version}`===value))throw Error('Unknown component pack')
     if (key === 'component_page' && !(Number.isInteger(value) && Number(value) >= 1 && Number(value) <= 100000)) throw new Error('Invalid component page')
     if (key === 'selection_mode' && !['group', 'component'].includes(String(value))) throw new Error('Invalid selection mode')

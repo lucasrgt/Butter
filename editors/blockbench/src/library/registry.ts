@@ -1,6 +1,9 @@
 import { readPack } from './pack.ts'
 import { packKey, type InstalledPack, type ComponentPack } from './types.ts'
 import { contentIdentity } from './identity.ts'
+import { checkPackOwnership } from './pack-mod.ts'
+import { groupVersions } from './versions.ts'
+import { categoryPath } from './categories.ts'
 
 const STORAGE='butter.component-library.v1'
 export class ComponentLibrary {
@@ -14,9 +17,17 @@ export class ComponentLibrary {
       if(!Array.isArray(list)||list.length>32)throw Error('Invalid saved library')
       this.entries=list.map(v=>({pack:readPack(v.pack),enabled:v.enabled===true,source:typeof v.source==='string'?v.source:undefined}))
       if(new Set(this.entries.map(v=>packKey(v.pack))).size!==list.length)throw Error('Duplicate saved pack versions')
+      this.entries.filter(e=>e.pack.mod).forEach(e=>checkPackOwnership(this.entries,e.pack))
     }
   }
   list(){return structuredClone(this.entries)}
+  groups(){return groupVersions(this.list())}
+  visible(key?:string){return key?this.list().filter(e=>e.enabled&&packKey(e.pack)===key):this.groups().flatMap(g=>g.versions.find(e=>e.enabled)??[])}
+  resolve(modId:string) {
+    const groups=this.groups(),primary=groups.find(g=>g.versions.some(e=>e.pack.mod?.id===modId&&e.pack.mod.role==='primary'))
+    return {primary:primary?.versions[0],addons:groups.filter(g=>g.versions.some(e=>e.pack.mod?.id===modId&&e.pack.mod.role==='addon')),
+      unassociated:groups.filter(g=>!g.versions.some(e=>e.pack.mod)),revision:this.revision}
+  }
   get(key:string){const entry=this.entries.find(e=>packKey(e.pack)===key);if(!entry)throw Error(`Unknown pack: ${key}`);return structuredClone(entry)}
   check(expected?:unknown){if(expected!==undefined && expected!==this.revision)throw Error(`Library revision conflict: expected ${expected}, current ${this.revision}`)}
   private save(entries:InstalledPack[]) {
@@ -27,16 +38,17 @@ export class ComponentLibrary {
   install(value:unknown,source?:string,dry=false) {
     const pack=readPack(value),key=packKey(pack),existing=this.entries.find(e=>packKey(e.pack)===key)
     if(existing && contentIdentity(existing.pack)!==contentIdentity(pack))throw Error(`Pack ${key} already has different content; increment its version`)
+    if(!existing)checkPackOwnership(this.entries,pack)
     if(!dry&&!existing)this.save([...this.entries,{pack,enabled:true,source}])
     return {key,status:existing?'unchanged':dry?'ready':'installed',components:pack.components.length,revision:this.revision}
   }
   enable(key:string,enabled:boolean){this.get(key);this.save(this.entries.map(e=>packKey(e.pack)===key?{...e,enabled}:e))}
   remove(key:string){this.get(key);this.save(this.entries.filter(e=>packKey(e.pack)!==key))}
   catalog(search='',pack?:string) {
-    const query=search.toLowerCase().trim()
-    return structuredClone(this.entries.filter(e=>e.enabled && (!pack||packKey(e.pack)===pack)).flatMap(e=>e.pack.components.map(def=>({
-      pack:packKey(e.pack),pack_title:e.pack.title,category_title:e.pack.categories.find(c=>c.id===def.category)!.title,...def,
-    }))).filter(d=>[d.title,d.id,d.description,d.pack_title,d.category_title,...d.tags??[]].join(' ').toLowerCase().includes(query)))
+    const terms=search.toLowerCase().trim().split(/\s+/).filter(Boolean)
+    return structuredClone(this.visible(pack).flatMap(e=>e.pack.components.map(def=>({
+      pack:packKey(e.pack),pack_title:e.pack.title,category_title:categoryPath(e.pack.categories,def.category).map(c=>c.title).join(' / '),category_ancestors:categoryPath(e.pack.categories,def.category).map(c=>c.id),...def,
+    }))).filter(d=>terms.every(term=>[d.title,d.id,d.description,d.pack_title,d.category_title,...d.tags??[]].join(' ').toLowerCase().includes(term))))
   }
 }
 let instance:ComponentLibrary|undefined

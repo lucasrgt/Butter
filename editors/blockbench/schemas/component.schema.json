@@ -61,6 +61,11 @@
               "type": "string",
               "minLength": 1,
               "maxLength": 100
+            },
+            "parent": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_.-]*$",
+              "maxLength": 80
             }
           }
         }

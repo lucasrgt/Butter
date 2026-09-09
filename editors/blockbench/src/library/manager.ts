@@ -4,9 +4,10 @@ import { library } from './registry.ts'
 import { libraryCall } from './api.ts'
 import { exportArchive, importArchive } from './archive.ts'
 import { readPack } from './pack.ts'
-import { techPack, starterPack } from './templates.ts'
+import { techPack } from './templates.ts'
+import { packRow } from './manager-row.ts'
 import { componentVariants } from '../component-properties.ts'
-import { PALETTE, type Kind } from '../../../gui-builder/src/model/types.ts'
+import { PALETTE } from '../../../gui-builder/src/model/types.ts'
 
 let dialog:Dialog|undefined
 export function savePack(key:string) {
@@ -16,10 +17,14 @@ export function savePack(key:string) {
 function createPack() {
   const kinds=PALETTE.filter(k=>componentVariants(k).length&&k!=='player')
   const form=new Dialog({id:'butter_pack_create',title:'New component pack',form:{
+    mod_id:{label:'Mod ID (optional for shared packs)',type:'text',value:''},
+    role:{label:'Pack role',type:'select',options:{primary:'Primary',addon:'Addon'},value:'primary'},
+    reason:{label:'Reason for a separate addon',type:'text',value:''},
     id:{label:'Pack ID',type:'text',value:'my-pack'},title:{label:'Title',type:'text',value:'My Pack'},
     component:{label:'Component ID',type:'text',value:'my-component'},base:{label:'Base component',type:'select',options:Object.fromEntries(kinds.map(k=>[k,k])),value:'slot'},
   },onConfirm(result){attempt(()=>{
-    const pack=starterPack(String(result.id),String(result.title),String(result.component),result.base as Kind)
+    const {pack}=libraryCall({action:'scaffold',pack_id:result.id,title:result.title,component:result.component,base:result.base,
+      ...(result.mod_id?{mod:{id:result.mod_id,role:result.role,...(result.reason?{reason:result.reason}:{})}}:{})}) as {pack:unknown}
     library().install(pack);form.hide();refresh();showLibrary()
   })}})
   form.show()
@@ -51,25 +56,14 @@ export function showLibrary() {
     const path=Blockbench.pickDirectory({title:'Choose a folder with pack.json or component.json'})
     if(path){libraryCall({action:'import',path});showLibrary()}
   }),button('New pack',createPack),button('Install Tech Pack',()=>{library().install(techPack());refresh();showLibrary()}))
-  root.append(bar,element('p','butter-pack-note','JSON + PNG · Versions are pinned in saved projects. Export a pack to edit its files, then increment its version and import again.'))
-  root.append(element('p','butter-pack-note','Select checkboxes to combine packs. Enable / Disable controls which packs appear in the component library.'))
+  root.append(bar,element('p','butter-pack-note','JSON + PNG · Versions are pinned in saved projects. Use Add / update components to publish a new version in the same pack.'))
+  root.append(element('p','butter-pack-note','One primary pack per mod. Categories may contain subcategories. The catalog shows the latest enabled version; choose older versions here.'))
   const list=element('div','butter-pack-list')
-  for(const entry of library().list()) {
-    const key=`${entry.pack.id}@${entry.pack.version}`,row=element('div','butter-pack-row'),check=element('input')
-    check.type='checkbox';check.setAttribute('aria-label',`Select ${key} for combining`);check.onchange=()=>{
-      if(check.checked)selected.add(key);else selected.delete(key)
-      combineButton.disabled=!selected.size
-      combineButton.textContent=selected.size?`Combine selected packs (${selected.size})`:'Combine selected packs'
-    }
-    const info=element('span','butter-pack-info'),heading=element('strong','',entry.pack.title)
-    info.append(heading,element('small','',`${key} · ${entry.pack.components.length} components`),element('small','',entry.pack.description??entry.pack.categories.map(c=>c.title).join(' · ')))
-    const controls=element('div','butter-pack-actions')
-    controls.append(button(entry.enabled?'Disable':'Enable',()=>{libraryCall({action:'enable',pack:key,enabled:!entry.enabled});showLibrary()}),button('Export',()=>savePack(key)),
-      button('Remove',()=>{libraryCall({action:'remove',pack:key});showLibrary()},'Remove installed version. Saved projects retain their definitions.'))
-    if(entry.source)controls.append(button('Reload',()=>{libraryCall({action:'reload',pack:key});showLibrary()}))
-    const choice=element('label','butter-pack-choice');choice.append(check,info)
-    row.append(choice,controls);list.append(row)
+  const changed=()=>{
+    combineButton.disabled=!selected.size
+    combineButton.textContent=selected.size?`Combine selected packs (${selected.size})`:'Combine selected packs'
   }
+  for(const group of library().groups())list.append(packRow(group.versions,selected,changed,showLibrary,savePack))
   if(!list.children.length)list.append(element('p','butter-pack-note','No custom packs installed. Import a pack or try the Tech Pack.'))
   root.append(list,combineButton)
   dialog?.delete();dialog=new Dialog({id:'butter_component_library',title:'Butter — Component packs',width:820,lines:[root],buttons:['Close']});dialog.show()

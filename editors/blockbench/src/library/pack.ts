@@ -2,6 +2,8 @@ import { readDefinition } from './definition.ts'
 import { object, keys, id, string, array, version, relativePath, pngInfo } from './checks.ts'
 import { MAX_PACK_BYTES, type ComponentPack, type Category } from './types.ts'
 import { readMachineTypes, machinePackSignature } from './machine-types.ts'
+import { categoryTree } from './categories.ts'
+import { readPackMod } from './pack-mod.ts'
 
 export type FileReader = (path: string) => Uint8Array
 export function readPack(raw: unknown, read?: FileReader): ComponentPack {
@@ -27,16 +29,18 @@ export function readPack(raw: unknown, read?: FileReader): ComponentPack {
     const { assets: _, ...component } = v
     v = { schema:'butter.pack.v1', id:v.id, title:v.title, version:v.version ?? '1.0.0', targets:['b1.7.3'], categories:typeof v.category==='string'?[{id:v.category,title:v.category.replaceAll('-',' ')}]:[], components:[component] }
   }
-  keys(v,['$schema','schema','id','version','title','description','author','license','tags','targets','categories','components','assets','machine_types'],'pack')
+  keys(v,['$schema','schema','id','version','title','description','author','license','tags','targets','categories','components','assets','machine_types','mod'],'pack')
   if (v.schema !== 'butter.pack.v1' || JSON.stringify(v.targets) !== '["b1.7.3"]') throw Error('Expected butter.pack.v1 targeting b1.7.3')
   const pack: ComponentPack = { schema:v.schema,id:id(v.id),version:version(v.version),title:string(v.title,'pack title',100),targets:['b1.7.3'],categories:[],components:[],assets }
   if(v.machine_types!==undefined)pack.machine_types=readMachineTypes(v.machine_types)
+  if(v.mod!==undefined)pack.mod=readPackMod(v.mod)
   for (const key of ['description','author','license'] as const) if(v[key]!==undefined)pack[key]=string(v[key],key,key==='description'?500:100)
   if(v.tags!==undefined)pack.tags=array(v.tags,'tags',20).map(s=>string(s,'tag',40))
   const category = (raw: unknown) => {
-    const c=object(raw,'category');keys(c,['id','title','icon'],'category')
+    const c=object(raw,'category');keys(c,['id','title','icon','parent'],'category')
     const value: Category={id:id(c.id),title:string(c.title,'category title',100)}
     if(c.icon!==undefined)value.icon=string(c.icon,'category icon',100)
+    if(c.parent!==undefined)value.parent=id(c.parent,'parent category')
     const existing=pack.categories.find(c=>c.id===value.id)
     if(existing && JSON.stringify(existing)!==JSON.stringify(value))throw Error(`Conflicting category ${value.id}`)
     if(!existing)pack.categories.push(value)
@@ -58,6 +62,8 @@ export function readPack(raw: unknown, read?: FileReader): ComponentPack {
     if(ids.has(def.id))throw Error(`Duplicate component ${def.id}`);ids.add(def.id);return def
   })
   if(!pack.components.length)throw Error('Pack must contain components')
+  categoryTree(pack.categories)
+  if(pack.categories.length>32)throw Error('Maximum 32 categories per pack')
   if (Object.keys(assets).length > 64) throw Error('Maximum 64 PNG assets per pack')
   if(new TextEncoder().encode(JSON.stringify(pack)).length>MAX_PACK_BYTES)throw Error('Pack exceeds 2 MB')
   return pack
@@ -68,7 +74,7 @@ export function combinePacks(packs: ComponentPack[], metadata: {id:string;versio
   for(const pack of packs) {
     const prefix=`${pack.id}/${pack.version}/`
     for(const [path,data] of Object.entries(pack.assets))assets[prefix+path]=data
-    for(const c of pack.categories)categories.push({...c,id:`${pack.id}.${c.id}`})
+    for(const c of pack.categories)categories.push({...c,id:`${pack.id}.${c.id}`,...(c.parent?{parent:`${pack.id}.${c.parent}`}:{})})
     for(const original of pack.components) {
       const def=structuredClone(original);def.id=`${pack.id}.${def.id}`;def.category=`${pack.id}.${def.category}`
       for(const layer of [...def.layers ?? [],...def.variants.flatMap(v=>v.layers ?? [])])if(layer.asset)layer.asset=prefix+layer.asset

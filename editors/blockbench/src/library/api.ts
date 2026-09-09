@@ -12,15 +12,19 @@ import { starterPack } from './templates.ts'
 import { COMPONENT_SCHEMA, PACK_SCHEMA } from './schema.ts'
 import type { Kind } from '../../../gui-builder/src/model/types.ts'
 import { requireNode } from '../operations.ts'
+import { revisePack } from './revise.ts'
 
 const string=(value:unknown,label:string)=>{if(typeof value!=='string'||!value.trim())throw Error(`Expected ${label}`);return value}
 export function libraryCall(args:Record<string,unknown>) {
   const registry=library(),action=args.action??'list'
   if(action==='schema')return {component:COMPONENT_SCHEMA,pack:PACK_SCHEMA,limits:{pack_bytes:2*1024*1024,library_bytes:8*1024*1024,versions:32},layers:['rect','outline','image','text','fill']}
+  if(action==='resolve')return registry.resolve(string(args.mod_id,'mod_id'))
+  if(action==='revise'){const result=revisePack(registry,args);if(args.dry_run!==true)refresh();return result}
   if(action==='scaffold') {
     const pack=starterPack(string(args.pack_id,'pack_id'),string(args.title,'title'),string(args.component??'my-component','component'),string(args.base??'slot','base') as Kind)
     if(args.version!==undefined)pack.version=string(args.version,'version')
-    const valid=readPack(pack)
+    const valid=readPack({...pack,...(args.mod===undefined?{}:{mod:args.mod})})
+    registry.install(valid,undefined,true)
     if(args.path)writeLocal(string(args.path,'path'),exportArchive(valid))
     return {pack:valid,path:args.path}
   }
@@ -29,7 +33,7 @@ export function libraryCall(args:Record<string,unknown>) {
     if(!Number.isInteger(size)||size<1||size>50||!Number.isInteger(page)||page<1)throw Error('Catalog requires page >= 1 and page_size 1–50')
     return {components:entries.slice((page-1)*size,page*size),total:entries.length,page,page_size:size,revision:registry.revision}
   }
-  if(action==='list')return {packs:registry.list().map(e=>({key:`${e.pack.id}@${e.pack.version}`,title:e.pack.title,enabled:e.enabled,source:e.source,components:e.pack.components.length,categories:e.pack.categories})),revision:registry.revision}
+  if(action==='list')return {packs:registry.list().map(e=>({key:`${e.pack.id}@${e.pack.version}`,title:e.pack.title,mod:e.pack.mod,enabled:e.enabled,source:e.source,components:e.pack.components.length,categories:e.pack.categories})),groups:registry.groups().map(g=>({id:g.id,versions:g.versions.map(e=>e.pack.version)})),revision:registry.revision}
   registry.check(args.expected_library_revision)
   if(['import','validate','reload'].includes(String(action))) {
     const source=action==='reload'?registry.get(string(args.pack,'pack')).source:args.path

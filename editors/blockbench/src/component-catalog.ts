@@ -1,5 +1,6 @@
 import type { Kind } from '../../gui-builder/src/model/types.ts'
 import { library } from './library/registry.ts'
+import { categoryPath, categoryTree } from './library/categories.ts'
 
 export const CATEGORIES = [
   { id: 'layout', title: 'Layout' }, { id: 'inventory', title: 'Inventory' },
@@ -13,6 +14,7 @@ export interface ComponentEntry {
   keywords: string
   pack?: string
   component?: string
+  category_ancestors?: string[]
 }
 export const COMPONENTS: ComponentEntry[] = [
 
@@ -36,17 +38,17 @@ export const COMPONENTS: ComponentEntry[] = [
   { kind: 'separator', title: 'Separator', icon: 'horizontal_rule', category: 'layout', keywords: 'separator' },
 ]
 export const PAGE_SIZE = 10
-export function componentCategories() {
-  return [...CATEGORIES,...library().list().filter(e=>e.enabled).flatMap(e=>e.pack.categories.map(c=>({id:`${e.pack.id}@${e.pack.version}/${c.id}`,title:`${e.pack.title} · ${c.title}`})))]
+export function componentCategories(pack='all') {
+  return [...(pack==='all'||pack==='builtin'?CATEGORIES:[]),...(pack==='builtin'?[]:library().visible(pack==='all'?undefined:pack).flatMap(e=>categoryTree(e.pack.categories).map(c=>({id:`${e.pack.id}@${e.pack.version}/${c.id}`,title:`${e.pack.title} · ${categoryPath(e.pack.categories,c.id).map(p=>p.title).join(' / ')}`}))))]
 }
 export function allComponents(pack='all'):ComponentEntry[] {
   return [...(pack==='all'||pack==='builtin'?COMPONENTS:[]),...(pack==='builtin'?[]:library().catalog('',pack==='all'?undefined:pack).map(c=>({
-    kind:c.base,title:c.title,icon:c.icon??'extension',category:`${c.pack}/${c.category}`,keywords:[c.id,c.description,c.pack_title,...c.tags??[]].join(' '),pack:c.pack,component:c.id,
+    kind:c.base,title:c.title,icon:c.icon??'extension',category:`${c.pack}/${c.category}`,category_ancestors:c.category_ancestors.map(id=>`${c.pack}/${id}`),keywords:[c.id,c.description,c.pack_title,c.category_title,...c.tags??[]].join(' '),pack:c.pack,component:c.id,
   })))]
 }
 export function componentPage(query = '', category = 'all', page = 1, entries = allComponents()) {
   const terms = query.trim().toLocaleLowerCase().split(/\s+/).filter(Boolean)
-  const matches = entries.filter(item => (category === 'all' || item.category === category) &&
+  const matches = entries.filter(item => (category === 'all' || item.category === category || item.category_ancestors?.includes(category)) &&
     terms.every(term => `${item.title} ${item.kind} ${item.keywords}`.toLocaleLowerCase().includes(term)))
   const pages = Math.max(1, Math.ceil(matches.length / PAGE_SIZE))
   const current = Math.max(1, Math.min(pages, page))

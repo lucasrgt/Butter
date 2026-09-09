@@ -32,7 +32,8 @@ without MCP; the companion API is `globalThis.BlockbenchButter`, version 1.
   update. `butter_view` controls search/category/page; `butter_components` queries
   the catalog without changing the current filters. The pack filter and **Packs**
   manager add declarative JSON/PNG components, immutable versions, import/export,
-  combination and the original Tech Pack. See [Component packs](COMPONENT-PACKS.md).
+  combination and the original Tech Pack. See [Component packs](COMPONENT-PACKS.md)
+  and [one pack per mod, versioned updates and subcategories](PACK-WORKFLOW.md).
 - **Position:** edit X/Y, drag components, or move the selected component/group
   with arrows (1 pixel) and Shift + arrows (10 pixels). Holding an arrow waits
   350 ms, then repeats every 75 ms. Release, focus change to a text field,

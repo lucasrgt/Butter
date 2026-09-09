@@ -41,13 +41,13 @@ export function renderPalette(root: HTMLElement) {
   const options=(select:HTMLSelectElement,entries:{id:string;title:string}[])=>{
     select.replaceChildren(...entries.map(e=>{const option=element('option','',e.title);option.value=e.id;return option}))
   }
-  options(ui.category,[{id:'all',title:'All categories'},...componentCategories()])
+  options(ui.category,[{id:'all',title:'All categories'},...componentCategories(view.component_pack)])
   options(ui.pack,[{id:'all',title:'All packs'},{id:'builtin',title:'Built-in'},...library().list().filter(e=>e.enabled).map(e=>({id:`${e.pack.id}@${e.pack.version}`,title:`${e.pack.title} · ${e.pack.version}`}))])
   ui.category.value = view.component_category
   ui.pack.value=view.component_pack
   const result = componentPage(view.component_search, view.component_category, view.component_page,allComponents(view.component_pack))
   ui.results.replaceChildren()
-  for (const category of componentCategories()) {
+  for (const category of componentCategories(view.component_pack)) {
     const entries = result.items.filter(item => item.category === category.id)
     if (!entries.length) continue
     const grid = element('div', 'butter-palette')

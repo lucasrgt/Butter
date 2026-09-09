@@ -51,7 +51,7 @@ export function call(command: string, args: Args = {}): unknown {
   if (extraCommands.includes(command)) return extraCall(command, args)
   if (command === 'components') {
     const view = viewState(), category = string(args, 'category', view.component_category)
-    const CATEGORIES=componentCategories()
+    const CATEGORIES=componentCategories(string(args,'pack',view.component_pack))
     if (category !== 'all' && !CATEGORIES.some(item => item.id === category)) throw new Error('Unknown component category')
     const page = integer(args, 'page') ?? view.component_page
     if (page < 1) throw new Error('Page starts at 1')

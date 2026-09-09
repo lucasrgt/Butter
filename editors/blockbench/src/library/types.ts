@@ -3,7 +3,8 @@ import type { Field, PropertyValues, Variant } from '../component-properties.ts'
 import type { SemanticConfig } from '../semantics-catalog.ts'
 
 export type PackSemantics = Omit<SemanticConfig, 'id' | 'slot' | 'tab_index'>
-export interface Category { id: string; title: string; icon?: string }
+export interface Category { id: string; title: string; icon?: string; parent?: string }
+export interface PackMod { id: string; role: 'primary' | 'addon'; reason?: string }
 export interface Layer {
   type: 'rect' | 'outline' | 'image' | 'text' | 'fill'
   x: number; y: number; w: number; h: number
@@ -28,6 +29,7 @@ export interface ComponentPack {
   author?: string; license?: string; tags?: string[]; targets: ['b1.7.3']
   categories: Category[]; components: ComponentDefinition[]; assets: Record<string, string>
   machine_types?: import('./machine-types.ts').MachineTypePack[]
+  mod?: PackMod
 }
 export interface InstalledPack { pack: ComponentPack; enabled: boolean; source?: string }
 export interface LibraryDocument {

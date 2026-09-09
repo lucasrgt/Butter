@@ -1,5 +1,6 @@
 import css from './style.css'
 import paletteCss from './palette.css'
+import { bindPanelResize } from './panel-resize.ts'
 import { restoreMaterialPack, disposeMaterialPack } from './minecraft/material-assets.ts'
 import { api, call } from './api.ts'
 import { setupProjectState, teardownProjectState, subscribe, refresh } from './host.ts'
@@ -30,6 +31,7 @@ function panel(id: string, name: string, side: 'left' | 'right', render: (root: 
     condition: () => !!Project && Modes.selected === mode, resizable: true, growable: true })
   const root = element('div', 'butter-ui butter-panel')
   instance.node.append(root)
+  cleanups.push(bindPanelResize(instance))
   const update = () => { if (Project) attempt(() => render(root)) }
   cleanups.push(subscribe(update))
   panels.push(instance)
